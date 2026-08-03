@@ -1,8 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, CreditCard, MessageSquare, Receipt, Settings} from "lucide-react";
-import {Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuButton, SidebarMenuItem} from "@/components/ui/sidebar";
+import {
+  LayoutDashboard,
+  CreditCard,
+  MessageSquare,
+  Receipt,
+  Settings,
+} from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
 const menuItems = [
   {
@@ -11,20 +25,16 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Payment Gateways",
-    href: "/gateways",
+    title: "Providers",
+    href: "/providers",
     icon: CreditCard,
   },
   {
-    title: "Transactions",
-    href: "/transactions",
+    title: "Users",
+    href: "/users",
     icon: Receipt,
   },
-  {
-    title: "SMS Providers",
-    href: "/sms",
-    icon: MessageSquare,
-  },
+
   {
     title: "Settings",
     href: "/settings",

@@ -1,6 +1,17 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@base-ui/react";
-import { ArrowUpRight, Search} from "lucide-react";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/auth-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
 const stats = [
   {
@@ -30,44 +41,55 @@ const stats = [
 ];
 
 export default function Dashboard() {
+  const router = useRouter();
+  const { logout, user } = useAuth();
+
+  async function handleLogout() {
+    await logout();
+    router.replace("/login");
+  }
+
   return (
     <div className="min-h-screen bg-slate-100">
       {/* Header */}
       <header className="flex items-center justify-between border-b bg-white px-8 py-4">
         <div>
           <p className="text-xs text-gray-500">Gateway</p>
-          <h1 className="text-xl font-bold text-slate-900">
-            Transactions
-          </h1>
+          <h1 className="text-xl font-bold text-slate-900">Transactions</h1>
+          {user ? (
+            <p className="text-sm text-muted-foreground">
+              Signed in as {user.email}
+            </p>
+          ) : null}
         </div>
 
-<div className="flex gap-3">
-        <div className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2">
-          <Search className="h-4 w-4 text-gray-400" />
-          <input
-            placeholder="Search transactions, logs..."
-            className="w-fit border-none bg-transparent text-sm outline-none"
-          />
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger render={<Button />} className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-200 font-semibold text-amber-800">
-            OA
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-3">
+          <div className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2">
+            <Search className="h-4 w-4 text-gray-400" />
+            <input
+              placeholder="Search transactions, logs..."
+              className="w-fit border-none bg-transparent text-sm outline-none"
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              {user ? user.email : "My Account"}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
       {/* Dashboard */}
-      <main className="p-8">
-        
-      </main>
+      <main className="p-8"></main>
     </div>
   );
 }
