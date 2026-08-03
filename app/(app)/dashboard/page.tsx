@@ -1,10 +1,6 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@base-ui/react";
-import {
-  ArrowUpRight,
-  Search,
-  ChevronDown,
-} from "lucide-react";
+import { ArrowUpRight, Search} from "lucide-react";
 
 const stats = [
   {
@@ -70,33 +66,7 @@ export default function Dashboard() {
 
       {/* Dashboard */}
       <main className="p-8">
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {stats.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border bg-white p-6 shadow-sm"
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                {item.title}
-              </p>
-
-              <h2 className="mt-3 text-4xl font-bold text-slate-900">
-                {item.value}
-              </h2>
-
-              <div className="mt-4 flex items-center gap-2 text-sm font-medium text-emerald-600">
-                <ArrowUpRight className="h-4 w-4" />
-                {item.change}
-              </div>
-
-              <div className="mt-4 h-1.5 w-16 rounded-full bg-gray-100">
-                <div
-                  className={`h-full w-5 rounded-full ${item.color}`}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        
       </main>
     </div>
   );
