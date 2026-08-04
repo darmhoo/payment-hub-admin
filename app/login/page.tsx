@@ -40,6 +40,7 @@ export default function LoginPage() {
       setError(data.error ?? "Unable to sign in right now.");
       return;
     }
+    
 
     login({ email });
     setMessage(data.message ?? "Signed in successfully.");
@@ -74,7 +75,7 @@ export default function LoginPage() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                type="email"
+                type="text"
                 placeholder="admin@paymenthub.com"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}

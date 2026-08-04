@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import "../globals.css";
 
-import SideBar from "@/components/app-sidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { AppShellClient } from "@/components/app-shell-client";
 import { isAuthenticated } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Payment Gateway",
@@ -26,17 +21,5 @@ export default async function RootLayout({
     redirect("/login");
   }
 
-  return (
-    <SidebarProvider defaultOpen>
-      <SideBar />
-
-      <SidebarInset>
-        <header className="flex h-16 items-center border-b bg-background px-4">
-          <SidebarTrigger />
-        </header>
-
-        <main className="flex-1">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+  return <AppShellClient>{children}</AppShellClient>;
 }

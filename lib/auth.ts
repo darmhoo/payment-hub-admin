@@ -28,7 +28,7 @@ export function isValidCredentials(email: string, password: string) {
   );
 }
 
-export async function createSession(email: string) {
+export async function createSession(email: string, token?: string) {
   const cookieStore = await cookies();
 
   cookieStore.set("auth_session", "true", {
@@ -46,6 +46,16 @@ export async function createSession(email: string) {
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });
+
+  if (token) {
+    cookieStore.set("auth_token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  }
 }
 
 export async function clearSession() {
@@ -53,6 +63,7 @@ export async function clearSession() {
 
   cookieStore.delete("auth_session");
   cookieStore.delete("auth_user");
+  cookieStore.delete("auth_token");
 }
 
 export async function isAuthenticated() {

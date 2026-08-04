@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSession } from "@/lib/auth";
-import { getApiUrl } from "@/lib/api";
+import apiClient from "@/lib/axios-client";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -8,31 +8,41 @@ export async function POST(request: Request) {
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Email and password are required." },
+      { status: 400 },
+    );
   }
 
   try {
-    const response = await fetch(getApiUrl("/internal/auth/login"), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
+    const response = await apiClient.post("/internal/auth/login", {
+      email,
+      password,
     });
 
-    const data = await response.json().catch(() => ({}));
+    const data = response.data;
+    const token = data?.token ?? data?.accessToken ?? data?.access_token;
 
-    if (!response.ok) {
-      return NextResponse.json({ error: data.message ?? "Invalid email or password." }, { status: response.status });
+    if (!response.status || response.status >= 400) {
+      return NextResponse.json(
+        { error: data.message ?? "Invalid email or password." },
+        { status: response.status },
+      );
     }
 
-    await createSession(email);
+    await createSession(email, token);
 
     return NextResponse.json({
       message: data.message ?? "Signed in successfully.",
       user: { email },
     });
-  } catch {
-    return NextResponse.json({ error: "Unable to reach the backend server on port 8080." }, { status: 502 });
+  } catch (error: unknown) {
+    const status = (error as { response?: { status?: number } })?.response?.status ?? 502;
+    const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+
+    return NextResponse.json(
+      { error: message ?? "Unable to reach the backend server on port 8080." },
+      { status },
+    );
   }
 }

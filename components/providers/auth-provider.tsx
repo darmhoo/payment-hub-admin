@@ -10,6 +10,7 @@ type AuthContextValue = {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  refresh: () => Promise<void>;
   login: (user: AuthUser) => void;
   logout: () => Promise<void>;
 };
@@ -46,16 +47,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       isAuthenticated: Boolean(user),
       isLoading,
+      refresh: async () => {
+        try {
+          setIsLoading(true);
+          const response = await fetch("/api/auth/me", {
+            cache: "no-store",
+            credentials: "include",
+          });
+          if (!response.ok) {
+            setUser(null);
+            return;
+          }
+          const data = await response.json();
+          setUser(data.user ?? null);
+        } catch {
+          setUser(null);
+        } finally {
+          setIsLoading(false);
+        }
+      },
       login: (nextUser) => setUser(nextUser),
       logout: async () => {
         try {
-          await fetch("/api/auth/logout", { method: "POST" });
+          await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
         } finally {
           setUser(null);
         }
       },
     }),
-    [user, isLoading]
+    [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
