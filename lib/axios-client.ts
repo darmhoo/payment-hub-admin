@@ -11,7 +11,7 @@ apiClient.interceptors.request.use(async (config) => {
   const token = cookieStore.get("auth_token")?.value;
 
   if (token) {
-    config.headers.set("Authorization", `Bearer ${token}`);
+    config.headers.set("Authorization", `${token}`);
   }
 
   return config;

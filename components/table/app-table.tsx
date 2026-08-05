@@ -1,12 +1,14 @@
-"use client"
+"use client";
 
+import type { ReactNode } from "react";
 import {
   type ColumnDef,
+  getCoreRowModel,
   type RowData,
+  useReactTable,
+  getPaginationRowModel,
   flexRender,
-  tableFeatures,
-  useTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -15,27 +17,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import { DataTablePagination } from "@/components/table/pagination";
 
 interface DataTableProps<TData extends RowData> {
-  columns: ColumnDef<any, TData, any>[]
-  data: TData[]
+  columns: ColumnDef<TData, unknown>[];
+  data: TData[];
+  emptyMessage?: ReactNode;
+  className?: string;
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  emptyMessage = "No results.",
+  className,
 }: DataTableProps<TData>) {
-  const features = tableFeatures({})
-
-  const table = useTable({
+  const table = useReactTable({
     data,
     columns,
-    features,
-  })
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
   return (
-    <div className="overflow-hidden rounded-md border">
+    <div
+      className={["overflow-hidden rounded-md border", className]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -47,10 +57,10 @@ export function DataTable<TData extends RowData>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
@@ -72,12 +82,14 @@ export function DataTable<TData extends RowData>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                {emptyMessage}
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+
+      <DataTablePagination table={table} />
     </div>
-  )
+  );
 }

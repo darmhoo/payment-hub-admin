@@ -21,7 +21,8 @@ export async function POST(request: Request) {
     });
 
     const data = response.data;
-    const token = data?.token ?? data?.accessToken ?? data?.access_token;
+    console.log("Response from backend login:", data);
+    const token = data?.data.token ?? data?.accessToken ?? data?.access_token;
 
     if (!response.status || response.status >= 400) {
       return NextResponse.json(
