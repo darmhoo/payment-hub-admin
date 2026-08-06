@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   LayoutDashboard,
   CreditCard,
-  MessageSquare,
+  ArrowRightLeft,
   Receipt,
   Settings,
 } from "lucide-react";
@@ -28,6 +28,11 @@ const menuItems = [
     title: "Providers",
     href: "/providers",
     icon: CreditCard,
+  },
+  {
+    title: "Transactions",
+    href: "/transactions",
+    icon: ArrowRightLeft,
   },
   {
     title: "Users",
