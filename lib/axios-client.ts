@@ -12,6 +12,7 @@ apiClient.interceptors.request.use(async (config) => {
 
   if (token) {
     config.headers.set("Authorization", `${token}`);
+    config.headers.set("X-Auth-Key", `${token}`);
   }
 
   return config;

@@ -34,7 +34,7 @@ export function DataTable<TData extends RowData>({
   className,
 }: DataTableProps<TData>) {
   const table = useReactTable({
-    data,
+    data: data ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -34,7 +34,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="flex h-15 items-center border-b bg-background px-4">
           <SidebarTrigger />
-          <div className="flex gap-3">
+          <div className="flex gap-3 justify-end items-center w-full">
             <div className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2">
               <Search className="h-4 w-4 text-gray-400" />
               <input

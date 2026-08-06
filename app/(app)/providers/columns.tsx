@@ -14,19 +14,24 @@ export type Provider = {
 
 export const columns: ColumnDef<Provider, unknown>[] = [
   {
-    accessorKey: "driver",
+    id: "sn",
+    header: "S/N",
+    cell: (info) => info.row.index + 1,
+  },
+  {
+    accessorKey: "Driver",
     header: "Driver",
   },
   {
-    accessorKey: "category",
+    accessorKey: "Category",
     header: "Category",
   },
   {
-    accessorKey: "name",
+    accessorKey: "Name",
     header: "Name",
   },
   {
-    accessorKey: "priority",
+    accessorKey: "Priority",
     header: "Priority",
   },
 ];
