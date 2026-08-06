@@ -13,26 +13,26 @@ import { Button } from "@/components/ui/button";
 
 import { columns } from "./column";
 
-// const mockTransactions = [
-//   {
-//     id: "1",
-//     reference: "TXN-100001",
-//     customer: "John Doe",
-//     amount: 25000,
-//     paymentMethod: "Card",
-//     status: "success",
-//     createdAt: "2026-08-06 12:30 PM",
-//   },
-//   {
-//     id: "2",
-//     reference: "TXN-100002",
-//     customer: "Jane Smith",
-//     amount: 12000,
-//     paymentMethod: "Transfer",
-//     status: "pending",
-//     createdAt: "2026-08-06 11:10 AM",
-//   },
-// ];
+const mockTransactions = [
+  {
+    id: "1",
+    reference: "TXN-100001",
+    customer: "John Doe",
+    amount: 25000,
+    paymentMethod: "Card",
+    status: "success",
+    createdAt: "2026-08-06 12:30 PM",
+  },
+  {
+    id: "2",
+    reference: "TXN-100002",
+    customer: "Jane Smith",
+    amount: 12000,
+    paymentMethod: "Transfer",
+    status: "pending",
+    createdAt: "2026-08-06 11:10 AM",
+  },
+];
 
 export default function TransactionsPage() {
   const [search, setSearch] = useState("");

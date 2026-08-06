@@ -1,110 +1,95 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/auth-provider";
 import {
-  ArrowUpRight,
-  CreditCard,
-  DollarSign,
-  Users,
-  Wallet,
-} from "lucide-react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+// import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
-import AppPageHeader from "@/components/app-page-header";
-import AppStatCard from "@/components/app-stat-card";
-import PageContainer from "@/components/app-page-container";
-import AppToolbar from "@/components/app-toolbar";
-import AppTable from "@/components/app-table";
-
-import { Button } from "@/components/ui/button";
-
-const transactions = [
+const stats = [
   {
-    customer: "John Doe",
-    amount: "₦25,000",
-    status: "Success",
-    method: "Card",
-    date: "Today",
+    title: "Volume Today",
+    value: "₦2,438,900",
+    change: "+12.4% vs yesterday",
+    color: "bg-emerald-500",
   },
   {
-    customer: "Jane Smith",
-    amount: "₦15,000",
-    status: "Pending",
-    method: "Transfer",
-    date: "Today",
+    title: "Success Rate",
+    value: "96.2%",
+    change: "+0.8pt",
+    color: "bg-emerald-500",
+  },
+  {
+    title: "SMS Sent Today",
+    value: "4,812",
+    change: "98.7% delivered",
+    color: "bg-amber-500",
+  },
+  {
+    title: "Avg Settlement",
+    value: "1.8s",
+    change: "0.3s faster",
+    color: "bg-teal-500",
   },
 ];
 
-const columns = [
-  {
-    accessorKey: "customer",
-    header: "Customer",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-  },
-  {
-    accessorKey: "method",
-    header: "Method",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-  },
-];
+export default function Dashboard() {
+  const router = useRouter();
+  const { logout, user } = useAuth();
 
-export default function DashboardPage() {
+  async function handleLogout() {
+    await logout();
+    router.replace("/login");
+  }
+
   return (
-    <PageContainer>
+    <div className="min-h-screen bg-slate-100">
+      {/* Header */}
+      <header className="flex items-center justify-between border-b bg-white px-8 py-4">
+        <div>
+          <p className="text-xs text-gray-500">Gateway</p>
+          <h1 className="text-xl font-bold text-slate-900">Transactions</h1>
+          {user ? (
+            <p className="text-sm text-muted-foreground">
+              Signed in as {user.email}
+            </p>
+          ) : null}
+        </div>
 
-      <AppPageHeader
-        title="Dashboard"
-        description="Monitor payments, merchants and system activity."
-        
-      />
+        <div className="flex gap-3">
+          <div className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2">
+            <Search className="h-4 w-4 text-gray-400" />
+            <input
+              placeholder="Search transactions, logs..."
+              className="w-fit border-none bg-transparent text-sm outline-none"
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              {user ? user.email : "My Account"}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-
-        <AppStatCard
-          title="Revenue"
-          value="₦24.8M"
-          icon={<DollarSign className="h-5 w-5 text-zinc-400" />}
-        />
-
-        <AppStatCard
-          title="Transactions"
-          value="12,486"
-          icon={<CreditCard className="h-5 w-5 text-zinc-400" />}
-        />
-
-        <AppStatCard
-          title="Merchants"
-          value="245"
-          icon={<Wallet className="h-5 w-5 text-zinc-400" />}
-        />
-
-        <AppStatCard
-          title="Users"
-          value="28"
-          icon={<Users className="h-5 w-5 text-zinc-400" />}
-        />
-
-      </div>
-
-      <AppToolbar
-        search=""
-        onSearch={() => {}}
-        placeholder="Search transactions..."
-      />
-
-      <AppTable
-        columns={columns}
-        data={transactions}
-      />
-
-    </PageContainer>
+      {/* Dashboard */}
+      <main className="p-8"></main>
+    </div>
   );
 }
