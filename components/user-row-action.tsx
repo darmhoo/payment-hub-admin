@@ -1,8 +1,7 @@
 "use client";
 
+import { useState } from "react";
 import { MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 
 import {
   DropdownMenu,
@@ -12,47 +11,152 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { User } from "@/app/(app)/users/columns";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-interface Props {
+import { Button } from "@/components/ui/button";
+
+import type { User } from "@/app/(app)/users/columns";
+
+interface UserRowActionsProps {
   user: User;
+  onEdit: (user: User) => void;
+  onResetPassword: (user: User) => void;
+  onDelete: (user: User) => void;
 }
 
 export default function UserRowActions({
   user,
-}: Props) {
+  onEdit,
+  onResetPassword,
+  onDelete,
+}: UserRowActionsProps) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+            >
+              <MoreHorizontal className="h-4 w-4" />
 
-      <DropdownMenuTrigger asChild>
+              <span className="sr-only">
+                Open user actions
+              </span>
+            </Button>
+          }
+        />
 
-        <Button
-          variant="ghost"
-          size="icon"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Edit User
+          </DropdownMenuItem>
 
-      </DropdownMenuTrigger>
+          <DropdownMenuItem
+            onClick={() => {
+              onResetPassword(user);
+            }}
+          >
+            Reset Password
+          </DropdownMenuItem>
 
-      <DropdownMenuContent align="end">
+          <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
-          Edit User
-        </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-red-600 focus:text-red-600"
+            onClick={() => {
+              onDelete(user);
+            }}
+          >
+            Delete User
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-        <DropdownMenuItem>
-          Reset Password
-        </DropdownMenuItem>
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Edit User
+            </DialogTitle>
 
-        <DropdownMenuSeparator />
+            <DialogDescription>
+              Update {user.name}&apos;s account information.
+            </DialogDescription>
+          </DialogHeader>
 
-        <DropdownMenuItem className="text-red-600">
-          Delete User
-        </DropdownMenuItem>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">
+                Name
+              </label>
 
-      </DropdownMenuContent>
+              <input
+                className="mt-1 w-full rounded-md border px-3 py-2"
+                defaultValue={user.name}
+              />
+            </div>
 
-    </DropdownMenu>
+            <div>
+              <label className="text-sm font-medium">
+                Email
+              </label>
+
+              <input
+                className="mt-1 w-full rounded-md border px-3 py-2"
+                defaultValue={user.email}
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">
+                Role
+              </label>
+
+              <input
+                className="mt-1 w-full rounded-md border px-3 py-2"
+                defaultValue={user.role}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              onClick={() => {
+                setOpen(false);
+                onEdit(user);
+              }}
+            >
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

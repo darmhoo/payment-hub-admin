@@ -33,7 +33,7 @@ export default function Providers() {
       .catch((error) => {
         console.error("Error fetching providers:", error);
       });
-  }, []);
+  }, );
   return (
     <div className="min-h-screen bg-slate-100 px-8">
       <div>

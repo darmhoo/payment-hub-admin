@@ -5,7 +5,14 @@ import { MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import UserAvatar from "@/components/user-avatar";
 
@@ -18,14 +25,27 @@ export type User = {
   last_login_at?: string | Date | null;
 };
 
-export const columns: ColumnDef<User>[] = [
+type UserColumnActions = {
+  onEdit: (user: User) => void;
+  onChangeRole: (user: User) => void;
+  onChangeStatus: (user: User) => void;
+  onDelete: (user: User) => void;
+};
+
+export const getColumns = ({
+  onEdit,
+  onChangeRole,
+  onChangeStatus,
+  onDelete,
+}: UserColumnActions): ColumnDef<User>[] => [
   {
     accessorKey: "name",
     header: "User",
+
     cell: ({ row }) => {
       const user = row.original;
 
-      return ( 
+      return (
         <div className="flex items-center gap-3">
           <UserAvatar name={user.name} />
 
@@ -46,27 +66,33 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "role",
     header: "Role",
+
     cell: ({ row }) => (
-      <Badge variant="secondary">
+      <span className="capitalize">
         {row.original.role}
-      </Badge>
+      </span>
     ),
   },
 
   {
     accessorKey: "status",
     header: "Status",
+
     cell: ({ row }) => {
-      const status = row.original.status ?? "blocked";
+      const status =
+        row.original.status ?? "blocked";
 
       return (
         <Badge
-          variant={status === "authorized" ? "default" : "outline"}
+          variant={
+            status === "authorized"
+              ? "default"
+              : "outline"
+          }
           className={
             status === "authorized"
               ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
-              // : "bg-red-100 text-red-700 hover:bg-red-100"
-              : ""
+              : "text-red-600"
           }
         >
           {status}
@@ -78,8 +104,10 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "last_login_at",
     header: "Last Login",
+
     cell: ({ row }) => {
-      const value = row.original.last_login_at;
+      const value =
+        row.original.last_login_at;
 
       if (!value) {
         return (
@@ -99,38 +127,68 @@ export const columns: ColumnDef<User>[] = [
 
   {
     id: "actions",
-    header: "actions",
+    header: "Actions",
+
     enableSorting: false,
     enableHiding: false,
 
-    cell: ({ }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
+    cell: ({ row }) => {
+      const user = row.original;
 
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            Edit User
-          </DropdownMenuItem>
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+          />
 
-          <DropdownMenuItem>
-            Reset Password
-          </DropdownMenuItem>
+          <DropdownMenuContent align="end">
 
-          <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() =>
+                onEdit(user)
+              }
+            >
+              Edit User
+            </DropdownMenuItem>
 
-          <DropdownMenuItem className="text-red-600 focus:text-red-600">
-            Delete User
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+            <DropdownMenuItem
+              onClick={() =>
+                onChangeRole(user)
+              }
+            >
+              Change Role
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() =>
+                onChangeStatus(user)
+              }
+            >
+              Change Status
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              className="text-red-600 focus:text-red-600"
+              onClick={() =>
+                onDelete(user)
+              }
+            >
+              Delete User
+            </DropdownMenuItem>
+
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
