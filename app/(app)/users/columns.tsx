@@ -5,13 +5,7 @@ import { MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 
 import UserAvatar from "@/components/user-avatar";
 
@@ -20,7 +14,7 @@ export type User = {
   email: string;
   name: string;
   role: string;
-  status?: "active" | "inactive";
+  status?: "authorized" | "blocked";
   last_login_at?: string | Date | null;
 };
 
@@ -31,7 +25,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const user = row.original;
 
-      return (
+      return ( 
         <div className="flex items-center gap-3">
           <UserAvatar name={user.name} />
 
@@ -63,14 +57,15 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status ?? "inactive";
+      const status = row.original.status ?? "blocked";
 
       return (
         <Badge
-          variant={status === "active" ? "default" : "outline"}
+          variant={status === "authorized" ? "default" : "outline"}
           className={
-            status === "active"
+            status === "authorized"
               ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
+              // : "bg-red-100 text-red-700 hover:bg-red-100"
               : ""
           }
         >
@@ -108,7 +103,7 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
     enableHiding: false,
 
-    cell: ({ row }) => (
+    cell: ({ }) => (
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Button

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { createSession } from "@/lib/auth";
 import apiClient from "@/lib/axios-client";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const response = await apiClient.get("/internal/users", {});
 
