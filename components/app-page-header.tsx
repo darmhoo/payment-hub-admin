@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface AppPageHeaderProps {
@@ -19,24 +19,26 @@ export default function AppPageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 md:flex-row md:items-start md:justify-between",
+        "flex w-full items-center justify-between gap-4",
         className
       )}
     >
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+      {/* Title & Description */}
+      <div className="min-w-0 space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">
           {title}
         </h1>
 
         {description && (
-          <p className="max-w-2xl text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="max-w-2xl text-sm text-muted-foreground">
             {description}
           </p>
         )}
       </div>
 
+      {/* Actions */}
       {action && (
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           {action}
         </div>
       )}

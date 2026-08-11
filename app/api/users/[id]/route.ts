@@ -10,8 +10,7 @@ export async function PATCH(
     const body = await request.json();
 
     const response = await apiClient.patch(
-      `/internal/users/${id}/role`,
-      body
+      `/internal/users/${id}`, body
     );
 
     const data = response.data;

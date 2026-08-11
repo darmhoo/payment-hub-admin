@@ -5,6 +5,10 @@ import React, { useEffect } from "react";
 import { columns } from "./columns";
 import { useLoading } from "@/hooks/use-loading";
 import { Loader } from "@/components/ui/loader";
+import PageContainer from "@/components/app-page-container";
+import AppPageHeader from "@/components/app-page-header";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 export default function Providers() {
   const [providers, setProviders] = React.useState([]);
@@ -33,12 +37,18 @@ export default function Providers() {
       .catch((error) => {
         console.error("Error fetching providers:", error);
       });
-  }, );
+  }, []);
   return (
-    <div className="min-h-screen bg-slate-100 px-8">
-      <div>
-        <h1 className="text-2xl font-bold mb-4">Providers</h1>
-      </div>
+      <PageContainer className="space-y-6 p-4">
+            <AppPageHeader
+              title="Providers"
+              description="Manage payment gateway and sms providers."
+              action={
+                <Button>
+                  <Download className="mr-2 h-4 w-4" />
+                    Export
+                </Button>
+              } />
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <Loader text="Fetching providers..." />
@@ -50,6 +60,6 @@ export default function Providers() {
           emptyMessage="No providers found."
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

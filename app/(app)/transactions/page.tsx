@@ -1,53 +1,80 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
-import AppPageHeader from "@/components/app-page-header";
-import AppStatCard from "@/components/app-stat-card";
-import AppToolbar from "@/components/app-toolbar";
-import PageContainer from "@/components/app-page-container";
-import AppTable from "@/components/app-table";
-
+import { DataTable } from "@/components/table/app-table";
+import { Loader } from "@/components/ui/loader";
+import { useLoading } from "@/hooks/use-loading";
 import { Button } from "@/components/ui/button";
+
+import PageContainer from "@/components/app-page-container";
+import AppPageHeader from "@/components/app-page-header";
 
 import { columns } from "./column";
 
-const mockTransactions = [
-  {
-    id: "1",
-    reference: "TXN-100001",
-    customer: "John Doe",
-    amount: 25000,
-    paymentMethod: "Card",
-    status: "success",
-    createdAt: "2026-08-06 12:30 PM",
-  },
-  {
-    id: "2",
-    reference: "TXN-100002",
-    customer: "Jane Smith",
-    amount: 12000,
-    paymentMethod: "Transfer",
-    status: "pending",
-    createdAt: "2026-08-06 11:10 AM",
-  },
-];
+export type Transaction = {
+  reference: string;
+  provider: string;
+  customer: string;
+  amount: number;
+  status: "success" | "pending" | "failed";
+  date: string;
+};
 
-export default function TransactionsPage() {
-  const [search, setSearch] = useState("");
+interface TransactionsResponse {
+  transaction: {
+    data: {
+      data: Transaction[];
+    };
+  };
+}
 
-  const filtered = useMemo(() => {
-    return mockTransactions.filter((transaction) =>
-      transaction.customer
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
-  }, [search]);
+export default function TransactionPage() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { loading, withLoading } = useLoading();
+
+  async function fetchTransactions(): Promise<TransactionsResponse> {
+    const response = await fetch("/api/transactions", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    const data = await response.json().catch(() => null);
+
+    console.log("Transactions response:", data);
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error ??
+          data?.message ??
+          "Failed to fetch transactions"
+      );
+    }
+
+    return data;
+  }
+
+  useEffect(() => {
+    withLoading(fetchTransactions)
+      .then((result) => {
+        setTransactions(
+          result.transaction?.data?.data ?? []
+        );
+      })
+      .catch((error) => {
+        console.error(
+          "Error fetching transactions:",
+          error
+        );
+      });
+  }, []);
 
   return (
-    <PageContainer>
-
+    <PageContainer className="space-y-6 p-4">
       <AppPageHeader
         title="Transactions"
         description="Monitor all payment transactions."
@@ -59,41 +86,17 @@ export default function TransactionsPage() {
         }
       />
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-
-        <AppStatCard
-          title="Total Volume"
-          value="₦24.8M"
+      {loading ? (
+        <div className="flex h-64 items-center justify-center">
+          <Loader text="Fetching transactions..." />
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={transactions}
+          emptyMessage="No transactions found."
         />
-
-        <AppStatCard
-          title="Transactions"
-          value="12,486"
-        />
-
-        <AppStatCard
-          title="Successful"
-          value="12,120"
-        />
-
-        <AppStatCard
-          title="Failed"
-          value="366"
-        />
-
-      </div>
-
-      <AppToolbar
-        search={search}
-        onSearch={setSearch}
-        placeholder="Search transaction..."
-      />
-
-      <AppTable
-        columns={columns}
-        data={filtered}
-      />
-
+      )}
     </PageContainer>
   );
 }

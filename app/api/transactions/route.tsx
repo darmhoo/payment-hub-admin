@@ -3,7 +3,7 @@ import apiClient from "@/lib/axios-client";
 
 export async function GET() {
   try {
-    const response = await apiClient.get("/internal/transacti000ons");
+    const response = await apiClient.get("/admin/loan-products");
 
     const data = response.data;
 
@@ -27,6 +27,51 @@ export async function GET() {
       {
         status,
       }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+
+    const response = await apiClient.post(
+      "/admin/loan-products",
+      body
+    );
+
+    return NextResponse.json(
+      {
+        message: response.data?.message ?? "Loan product created successfully",
+        data: response.data,
+      },
+      {
+        status: response.status,
+      }
+    );
+  } catch (error: unknown) {
+    const axiosError = error as {
+      response?: {
+        status?: number;
+        data?: {
+          message?: string;
+          error?: string;
+        };
+      };
+      message?: string;
+    };
+
+    const status = axiosError.response?.status ?? 502;
+
+    return NextResponse.json(
+      {
+        error:
+          axiosError.response?.data?.message ??
+          axiosError.response?.data?.error ??
+          axiosError.message ??
+          "Unable to create loan product",
+      },
+      { status }
     );
   }
 }

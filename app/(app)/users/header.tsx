@@ -278,7 +278,7 @@ export default function HeaderComponent({
 
           <DialogFooter>
             <Button
-              type="button"
+              type="reset"
               variant="outline"
               onClick={() => {
                 createForm.reset();

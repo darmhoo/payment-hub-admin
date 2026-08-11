@@ -1,10 +1,11 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   DropdownMenu,
@@ -21,7 +22,7 @@ export type User = {
   email: string;
   name: string;
   role: string;
-  status?: "authorized" | "blocked";
+  status?: "active" | "blocked";
   last_login_at?: string | Date | null;
 };
 
@@ -38,6 +39,38 @@ export const getColumns = ({
   onChangeStatus,
   onDelete,
 }: UserColumnActions): ColumnDef<User>[] => [
+
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() &&
+          !table.getIsAllPageRowsSelected()
+        }
+        onCheckedChange={(value) =>
+          table.toggleAllPageRowsSelected(!!value)
+        }
+        aria-label="Select all"
+      />
+    ),
+
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        indeterminate={row.getIsSomeSelected()}
+        onCheckedChange={(value) =>
+          row.toggleSelected(!!value)
+        }
+        aria-label="Select row"
+      />
+    ),
+
+    enableSorting: false,
+    enableHiding: false,
+  },
+
   {
     accessorKey: "name",
     header: "User",
@@ -67,11 +100,15 @@ export const getColumns = ({
     accessorKey: "role",
     header: "Role",
 
-    cell: ({ row }) => (
-      <span className="capitalize">
-        {row.original.role}
-      </span>
-    ),
+    cell: ({ row }) => {
+      const role = row.original.role;
+
+      return (
+        <span className="capitalize">
+          {role?.replace("_", " ") ?? "—"}
+        </span>
+      );
+    },
   },
 
   {
@@ -79,18 +116,15 @@ export const getColumns = ({
     header: "Status",
 
     cell: ({ row }) => {
-      const status =
-        row.original.status ?? "blocked";
+      const status = row.original.status ?? "blocked";
+
+      const isActive = status === "active";
 
       return (
         <Badge
-          variant={
-            status === "authorized"
-              ? "default"
-              : "outline"
-          }
+          variant={isActive ? "default" : "outline"}
           className={
-            status === "authorized"
+            isActive
               ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
               : "text-red-600"
           }
@@ -106,8 +140,7 @@ export const getColumns = ({
     header: "Last Login",
 
     cell: ({ row }) => {
-      const value =
-        row.original.last_login_at;
+      const value = row.original.last_login_at;
 
       if (!value) {
         return (
@@ -137,57 +170,39 @@ export const getColumns = ({
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            }
-          />
+  <DropdownMenuTrigger>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8"
+    >
+      <MoreHorizontal className="h-4 w-4" />
+    </Button>
+  </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end">
+  <DropdownMenuContent align="end">
+    <DropdownMenuItem onClick={() => onEdit(user)}>
+      Edit User
+    </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() =>
-                onEdit(user)
-              }
-            >
-              Edit User
-            </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => onChangeRole(user)}>
+      Change Role
+    </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() =>
-                onChangeRole(user)
-              }
-            >
-              Change Role
-            </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => onChangeStatus(user)}>
+      Change Status
+    </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() =>
-                onChangeStatus(user)
-              }
-            >
-              Change Status
-            </DropdownMenuItem>
+    <DropdownMenuSeparator />
 
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem
-              className="text-red-600 focus:text-red-600"
-              onClick={() =>
-                onDelete(user)
-              }
-            >
-              Delete User
-            </DropdownMenuItem>
-
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <DropdownMenuItem
+      className="text-red-600 focus:text-red-600"
+      onClick={() => onDelete(user)}
+    >
+      Delete User
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
       );
     },
   },
