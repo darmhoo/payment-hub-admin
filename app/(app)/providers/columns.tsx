@@ -3,7 +3,7 @@
 import { type ColumnDef } from "@tanstack/react-table";
 
 export type Provider = {
-  id: string;
+  ID: string;
   driver: string;
   category: string;
   name: string;
@@ -33,5 +33,24 @@ export const columns: ColumnDef<Provider, unknown>[] = [
   {
     accessorKey: "Priority",
     header: "Priority",
+  },
+
+  {
+    header: "Actions",
+    cell: (info) => {
+      console.log("Row Info:", info); // Log the entire row info to the console
+      const provider = info.row.original;
+      console.log("Provider ID:", provider.ID); // Log the provider ID to the console
+      return (
+        <div className="flex gap-2">
+          <a
+            href={`/providers/${provider.ID}`}
+            className="text-blue-500 hover:underline"
+          >
+            View
+          </a>
+        </div>
+      );
+    },
   },
 ];

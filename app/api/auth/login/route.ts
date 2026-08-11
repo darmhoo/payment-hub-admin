@@ -20,6 +20,8 @@ export async function POST(request: Request) {
       password,
     });
 
+    console.log("Login Response:", response.data);
+
     const data = response.data;
     const token = data?.data.token ?? data?.accessToken ?? data?.access_token;
 
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
       user: { email },
     });
   } catch (error: unknown) {
+    console.error("Error during login:", error);
     const status = (error as { response?: { status?: number } })?.response?.status ?? 502;
     const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
 

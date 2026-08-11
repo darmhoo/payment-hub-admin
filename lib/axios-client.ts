@@ -45,4 +45,18 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
+apiClient.interceptors.response.use(
+  async (response) => {
+    return response;
+  },
+  async (error) => {
+    if (error.code === 401) {
+      return Promise.reject(new Error("Unauthorized: Please log in again."));
+    } else {
+      console.error("API Error:", error.message);
+    }
+    return Promise.reject(error);
+  },
+);
+
 export default apiClient;
