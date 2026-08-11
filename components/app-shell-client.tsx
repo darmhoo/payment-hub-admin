@@ -54,7 +54,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <button className="rounded-full focus:outline-none">
-                <Avatar className="h-10 w-10 cursor-pointer">
+                <Avatar className="h-8 w-8 cursor-pointer">
                   <AvatarImage
                     src={user?.name} alt={user?.email}
                   />

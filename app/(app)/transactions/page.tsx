@@ -74,12 +74,12 @@ export default function TransactionPage() {
   }, []);
 
   return (
-    <PageContainer className="space-y-6 p-4">
+    <PageContainer className="min-h-screen bg-slate-100 space-y-2 p-2">
       <AppPageHeader
         title="Transactions"
         description="Monitor all payment transactions."
         action={
-          <Button>
+          <Button className="flex">
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>

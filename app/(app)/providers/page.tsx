@@ -39,7 +39,7 @@ export default function Providers() {
       });
   }, []);
   return (
-      <PageContainer className="space-y-6 p-4">
+      <PageContainer className="min-h-screen bg-slate-100 space-y-6 p-4">
             <AppPageHeader
               title="Providers"
               description="Manage payment gateway and sms providers."
