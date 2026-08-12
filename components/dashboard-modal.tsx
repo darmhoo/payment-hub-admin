@@ -114,7 +114,7 @@ export default function DashboardModal() {
 
         <div className="flex items-center justify-between">
           
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <h3 className="text-sm font-semibold text-zinc-800">
               Top Providers by Volume
             </h3>
@@ -143,9 +143,9 @@ export default function DashboardModal() {
         </div>
 
         {/* Table headings */}
-        <div className="mb-2 grid grid-cols-[1fr_auto_auto] items-center gap-4 px-1 text-[9px] font-semibold uppercase tracking-wide text-zinc-400">
+        <div className="mb-2 grid grid-cols-[1fr_auto_auto] items-center gap-10 px-1 text-[9px] font-semibold uppercase tracking-wide text-zinc-400">
           <span>Provider</span>
-          <span>Volume</span>
+          <span>VolumEEe</span>
           <span>%</span>
         </div>
 

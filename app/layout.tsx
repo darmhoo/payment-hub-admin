@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -18,13 +19,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className="min-h-screen flex flex-col antialiased"
-        suppressHydrationWarning
-      >
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster richColors position="top-right" />
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>{children}</AuthProvider>
+
+          <Toaster
+            richColors
+            position="top-right"
+          />
+        </ThemeProvider>
       </body>
     </html>
   );

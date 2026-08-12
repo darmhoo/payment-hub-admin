@@ -16,10 +16,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Bell } from "lucide-react";
+import { Bell} from "lucide-react";
 import { useRouter } from "next/navigation";
 import AppToolbar from "./app-toolbar";
 import { useState } from "react";
+import { useTheme } from "next-themes";
+import { ThemeToggle } from "./theme-toggle";
 
 export function AppShellClient({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -44,6 +46,8 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
         onSearch={setSearch}
         placeholder="Search users, transactions, providers..."
       />
+
+      <ThemeToggle />
 
           <div className="flex gap-4">
           <div className="relative flex items-center gap-2 rounded-lg border bg-white px-2 py-2">

@@ -6,6 +6,7 @@ import AppPageHeader from "@/components/app-page-header";
 import AppStatCard from "@/components/app-stat-card";
 import { ArrowLeftRight, CreditCard, SquareUser } from "lucide-react";
 import DashboardModal from "@/components/dashboard-modal";
+import RecentTransactions from "@/components/recent-transaction";
 
 export default function Dashboard() {
 
@@ -36,18 +37,11 @@ export default function Dashboard() {
           icon={<ArrowLeftRight  className="h-5 w-5" />}
           subtitle="All transactions"
         />
-        
-        {/* <AppStatCard
-          title="Loan Products"
-          value="12,486"
-          icon={<FolderKanban  className="h-5 w-5" />}
-          subtitle="All loan products"
-        /> */}
       </div>
 
-      {/* <div className="grid gap-5 md:grid-cols-3 xl:grid-cols-3 bg-slate-100"> */}
-        <div className="grid gap-6 lg:grid-cols-3">
-      <DashboardModal />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <DashboardModal />
+        <RecentTransactions />
       </div>
     </PageContainer>
   );
