@@ -278,7 +278,7 @@ export default function Users() {
   );
 
   return (
-    <PageContainer className="min-h-screen bg-slate-100 space-y-2 p-2">
+    <PageContainer className="min-h-screen space-y-2 p-4">
       <AppPageHeader
         title="Users"
         description="Manage system administrators and users."

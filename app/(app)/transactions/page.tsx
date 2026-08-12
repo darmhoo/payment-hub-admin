@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
 import { DataTable } from "@/components/table/app-table";
@@ -23,9 +23,9 @@ export type Transaction = {
 };
 
 interface TransactionsResponse {
-  transaction: {
-    data: {
-      data: Transaction[];
+  transaction?: {
+    data?: {
+      data?: Transaction[];
     };
   };
 }
@@ -34,52 +34,127 @@ export default function TransactionPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const { loading, withLoading } = useLoading();
 
-  async function fetchTransactions(): Promise<TransactionsResponse> {
-    const response = await fetch("/api/transactions", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
+  const fetchTransactions = useCallback(
+    async (): Promise<TransactionsResponse> => {
+      const response = await fetch("/api/transactions", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      });
 
-    const data = await response.json().catch(() => null);
+      const data = await response.json().catch(() => null);
 
-    console.log("Transactions response:", data);
+      console.log("Transactions response:", data);
 
-    if (!response.ok) {
-      throw new Error(
-        data?.error ??
-          data?.message ??
-          "Failed to fetch transactions"
-      );
-    }
+      if (!response.ok) {
+        throw new Error(
+          data?.error ??
+            data?.message ??
+            `Failed to fetch transactions (${response.status})`
+        );
+      }
 
-    return data;
-  }
+      return data;
+    },
+    []
+  );
 
   useEffect(() => {
+    let mounted = true;
+
     withLoading(fetchTransactions)
       .then((result) => {
-        setTransactions(
-          result.transaction?.data?.data ?? []
-        );
+        if (!mounted) return;
+
+        const transactionData =
+          result?.transaction?.data?.data ?? [];
+
+        setTransactions(transactionData);
       })
       .catch((error) => {
-        console.error(
-          "Error fetching transactions:",
-          error
-        );
+        if (!mounted) return;
+
+        console.error("Error fetching transactions:", error);
+        setTransactions([]);
       });
-  }, []);
+
+    return () => {
+      mounted = false;
+    };
+
+  }, [fetchTransactions]);
+
+  const exportToCSV = useCallback(() => {
+    if (!transactions.length) {
+      return;
+    }
+
+    const headers = [
+      "Reference",
+      "Provider",
+      "Customer",
+      "Amount",
+      "Status",
+      "Date",
+    ];
+
+    const rows = transactions.map((transaction) => [
+      transaction.reference,
+      transaction.provider,
+      transaction.customer,
+      transaction.amount,
+      transaction.status,
+      transaction.date,
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) =>
+        row
+          .map((value) => {
+            const escapedValue = String(value).replace(
+              /"/g,
+              '""'
+            );
+
+            return `"${escapedValue}"`;
+          })
+          .join(",")
+      )
+      .join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `transactions-${new Date()
+      .toISOString()
+      .split("T")[0]}.csv`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }, [transactions]);
 
   return (
-    <PageContainer className="min-h-screen bg-slate-100 space-y-2 p-2">
+    <PageContainer className="min-h-screen space-y-2 p-4">
       <AppPageHeader
         title="Transactions"
         description="Monitor all payment transactions."
         action={
-          <Button className="flex">
+          <Button
+            type="button"
+            onClick={exportToCSV}
+            disabled={!transactions.length}
+          >
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>

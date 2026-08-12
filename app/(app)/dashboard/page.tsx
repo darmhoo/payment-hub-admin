@@ -11,7 +11,7 @@ import RecentTransactions from "@/components/recent-transaction";
 export default function Dashboard() {
 
   return (
-    <PageContainer className="min-h-screen bg-slate-100">
+    <PageContainer className="min-h-screen space-y-2 p-4">
       <AppPageHeader
         title="Dashboard"
         description="Overview of your Payment Gateway and SMS platform."

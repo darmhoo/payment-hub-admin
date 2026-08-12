@@ -34,7 +34,6 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    body.role = "admin"; // Set the role to "admin" before sending the request
     console.log("Received body:", body);
     const response = await apiClient.post("/internal/users", body);
 
