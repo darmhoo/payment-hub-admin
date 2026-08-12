@@ -267,20 +267,22 @@ export default function ProviderDetailsPage() {
                               {hasValue && !isHidden && (
                                 <TooltipProvider>
                                   <Tooltip>
-                                    <TooltipTrigger>
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-6 w-6"
-                                        onClick={() =>
-                                          copySettingValue(row.value)
-                                        }
-                                        aria-label="Copy setting value"
-                                      >
-                                        <Copy className="h-3.5 w-3.5" />
-                                      </Button>
-                                    </TooltipTrigger>
+                                    <TooltipTrigger
+                                      render={
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-6 w-6"
+                                          onClick={() =>
+                                            copySettingValue(row.value)
+                                          }
+                                          aria-label="Copy setting value"
+                                        >
+                                          <Copy className="h-3.5 w-3.5" />
+                                        </Button>
+                                      }
+                                    />
                                     <TooltipContent side="top">
                                       Copy value
                                     </TooltipContent>
