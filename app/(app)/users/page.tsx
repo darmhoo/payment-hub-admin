@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { DataTable } from "@/components/table/app-table";
-
-import { getColumns, type User } from "./columns";
 import { Loader } from "@/components/ui/loader";
 import { notify } from "@/lib/toast";
 
@@ -21,9 +14,17 @@ import EditUserDialog from "@/components/edit-user-dialog";
 import EditStatusDialog from "@/components/edit-status-dialog";
 import EditRoleDialog from "@/components/edit-role-dialog";
 
+import { useUsers } from "@/components/providers/users-provider";
+
+import { getColumns, type User } from "./columns";
+
 export default function Users() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loadingUsers, setLoadingUsers] = useState(true);
+  const {
+    users,
+    loading: loadingUsers,
+    refreshUsers,
+  } = useUsers();
+
   const [submitting, setSubmitting] = useState(false);
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -36,99 +37,12 @@ export default function Users() {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [selectedStatusUser, setSelectedStatusUser] = useState<User | null>(null);
 
-  // Fetch users
-  const fetchUsers = useCallback(async () => {
-    const response = await fetch("/api/users", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
 
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(
-        data?.error ??
-          data?.message ??
-          "Failed to fetch users"
-      );
-    }
-
-    return data;
-  }, []);
-
-  const extractUsers = useCallback(
-    (result: unknown): User[] => {
-      const data = result as {
-        users?: {
-          data?: {
-            data?: {
-              users?: User[];
-            };
-          };
-        };
-        data?: {
-          users?: User[];
-        };
-      };
-
-      const fetchedUsers =
-        data?.users?.data?.data?.users ??
-        data?.data?.users ??
-        [];
-
-      return Array.isArray(fetchedUsers)
-        ? fetchedUsers
-        : [];
-    },
-    []
-  );
-
-  const reloadUsers = useCallback(async () => {
-    const result = await fetchUsers();
-    setUsers(extractUsers(result));
-  }, [fetchUsers, extractUsers]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadUsers = async () => {
-      try {
-        setLoadingUsers(true);
-
-        const result = await fetchUsers();
-
-        if (!mounted) return;
-
-        setUsers(extractUsers(result));
-      } catch (error) {
-        if (mounted) {
-          notify.error(
-            error instanceof Error
-              ? error.message
-              : "Failed to load users"
-          );
-        }
-      } finally {
-        if (mounted) {
-          setLoadingUsers(false);
-        }
-      }
-    };
-
-    loadUsers();
-
-    return () => {
-      mounted = false;
-    };
-  }, [fetchUsers, extractUsers]);
-
+  const reloadUsers = useCallback(async () => { await refreshUsers() }, [refreshUsers]); //refresh coming from users provider
+  
   const handleEdit = useCallback((user: User) => {
     setEditingUser(user);
-    setEditDialogOpen(true);
-  }, []);
+    setEditDialogOpen(true);}, []);
 
   const openRoleDialog = useCallback((user: User) => {
     setSelectedRoleUser(user);
@@ -136,6 +50,9 @@ export default function Users() {
     setRoleDialogOpen(true);
   }, []);
 
+  /*
+   * Submit role change
+   */
   const submitRoleChange = useCallback(async () => {
     if (!selectedRoleUser) {
       notify.error("No user selected");
@@ -143,7 +60,6 @@ export default function Users() {
     }
 
     const role = newRole.trim();
-
     if (!role) {
       notify.error("Role is required");
       return;
@@ -173,6 +89,9 @@ export default function Users() {
         );
       }
 
+      /*
+       * Refresh users through the provider
+       */
       await reloadUsers();
 
       setRoleDialogOpen(false);
@@ -191,10 +110,12 @@ export default function Users() {
     }
   }, [selectedRoleUser, newRole, reloadUsers]);
 
+
   const openStatusDialog = useCallback((user: User) => {
     setSelectedStatusUser(user);
     setStatusDialogOpen(true);
   }, []);
+
 
   const submitStatusChange = useCallback(async () => {
     if (!selectedStatusUser) {
@@ -235,6 +156,7 @@ export default function Users() {
         );
       }
 
+
       await reloadUsers();
 
       setStatusDialogOpen(false);
@@ -254,16 +176,19 @@ export default function Users() {
     }
   }, [selectedStatusUser, reloadUsers]);
 
+  /*
+   * Delete user
+   */
   const handleDelete = useCallback((user: User) => {
     notify.error(
       `Delete ${user.email} is not implemented yet`
     );
   }, []);
 
+
   const userColumns = useMemo(
     () =>
       getColumns({
-        
         onEdit: handleEdit,
         onChangeRole: openRoleDialog,
         onChangeStatus: openStatusDialog,
@@ -283,7 +208,9 @@ export default function Users() {
         title="Users"
         description="Manage system administrators and users."
         action={
-          <NewUserDialog onUserCreated={reloadUsers} />
+          <NewUserDialog
+            onUserCreated={reloadUsers}
+          />
         }
       />
 

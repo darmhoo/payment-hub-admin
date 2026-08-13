@@ -95,10 +95,8 @@ export default function RecentTransactions() {
   const router = useRouter();
 
   return (
-    <Card className="w-full max-w-md rounded-xl border-zinc-200 shadow-sm">
-      <CardContent className="p-4">
+        <section className="w-full max-w-md rounded-xl border-zinc-200 shadow-sm p-4">
 
-        {/* Header */}
         <div className="mb-4 flex items-center gap-1">
           <h3 className="text-sm font-semibold text-zinc-800">
             Recent Transactions
@@ -155,7 +153,6 @@ export default function RecentTransactions() {
           </button>
         </div>
 
-      </CardContent>
-    </Card>
+    </section>
   );
 }

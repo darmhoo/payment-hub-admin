@@ -3,19 +3,19 @@ import apiClient from "@/lib/axios-client";
 
 export async function GET() {
   try {
-    const response = await apiClient.get("/internal/users");
+    const response = await apiClient.get("admin/loan-products");
     const data = response.data;
     if (!response.status || response.status >= 400) {
       return NextResponse.json(
-        { error: data?.message ?? "Unable to fetch users."},
+        { error: data?.message ?? "Unable to fetch products."},
         { status: response.status || 500}
       );
     }
 
     return NextResponse.json({
       success: data?.success ?? true,
-      message: data?.message ?? "Users fetched successfully.",
-      users: data?.data?.users ?? [],
+      message: data?.message ?? "Products fetched successfully.",
+      users: data?.data?.products ?? [],
       pagination: data?.data?.pagination ?? null,
     });
   } catch (error: unknown) {
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log("Received body:", body);
     const response = await apiClient.post(
-      "/internal/users",
+      "admin/loan-products",
       body
     );
 
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     if (!response.status || response.status >= 400) {
       return NextResponse.json(
-        { error: data?.message ?? "Unable to create user."},
+        { error: data?.message ?? "Unable to create product."},
         { status: response.status || 500}
       );
     }
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: data?.success ?? true,
-        message:data?.message ?? "User created successfully.",
+        message:data?.message ?? "Product created successfully.",
         data: data?.data ?? data,
       },
       {status: response.status}

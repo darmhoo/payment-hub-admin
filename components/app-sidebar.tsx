@@ -6,7 +6,7 @@ import {
   CreditCard,
   ArrowRightLeft,
   Receipt,
-  Settings,
+  FolderKanban ,
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,9 +41,9 @@ const menuItems = [
   },
 
   {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
+    title: "Loan Products",
+    href: "/loan-products",
+    icon: FolderKanban,
   },
 ];
 

@@ -4,6 +4,10 @@ import { Toaster } from "sonner";
 
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { UsersProvider } from "@/components/providers/users-provider";
+import { TransactionsProvider } from "@/components/providers/transactions-provider";
+import { ProvidersProvider } from "@/components/providers/providers-provider";
+import { ProductsProvider } from "@/components/providers/loan-product-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +31,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <UsersProvider>
+              <TransactionsProvider>
+                <ProvidersProvider>
+                  <ProductsProvider>
+                    {children}
+                  </ProductsProvider>
+                </ProvidersProvider>
+              </TransactionsProvider>
+            </UsersProvider>
+          </AuthProvider>
 
           <Toaster
             richColors
