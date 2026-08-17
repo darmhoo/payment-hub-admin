@@ -23,6 +23,7 @@ export async function POST(request: Request) {
     console.log("Login Response:", response.data);
 
     const data = response.data;
+    console.log('data', data)
     const token = data?.data.token ?? data?.accessToken ?? data?.access_token;
 
     if (!response.status || response.status >= 400) {

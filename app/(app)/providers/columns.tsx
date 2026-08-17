@@ -1,6 +1,7 @@
 "use client";
 
-import { type ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 
 export type Provider = {
   ID: string;
@@ -12,7 +13,41 @@ export type Provider = {
   email?: string;
 };
 
+const columnHelper = createColumnHelper<Provider>();
+
 export const columns: ColumnDef<Provider, unknown>[] = [
+
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() &&
+          !table.getIsAllPageRowsSelected()
+        }
+        onCheckedChange={(value) =>
+          table.toggleAllPageRowsSelected(!!value)
+        }
+        aria-label="Select all"
+      />
+    ),
+
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        indeterminate={row.getIsSomeSelected()}
+        onCheckedChange={(value) =>
+          row.toggleSelected(!!value)
+        }
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+
+    
   {
     id: "sn",
     header: "S/N",

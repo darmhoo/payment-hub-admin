@@ -4,9 +4,9 @@ import Link from "next/link";
 import {
   LayoutDashboard,
   CreditCard,
-  MessageSquare,
+  ArrowRightLeft,
   Receipt,
-  Settings,
+  FolderKanban ,
 } from "lucide-react";
 import {
   Sidebar,
@@ -30,15 +30,20 @@ const menuItems = [
     icon: CreditCard,
   },
   {
+    title: "Transactions",
+    href: "/transactions",
+    icon: ArrowRightLeft,
+  },
+  {
     title: "Users",
     href: "/users",
     icon: Receipt,
   },
 
   {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
+    title: "Loan Products",
+    href: "/loan-products",
+    icon: FolderKanban,
   },
 ];
 

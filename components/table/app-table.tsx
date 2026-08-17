@@ -42,7 +42,7 @@ export function DataTable<TData extends RowData>({
 
   return (
     <div
-      className={["overflow-hidden rounded-md border", className]
+      className={["overflow-hidden rounded-2xl border bg-white shadow-sm", className]
         .filter(Boolean)
         .join(" ")}
     >

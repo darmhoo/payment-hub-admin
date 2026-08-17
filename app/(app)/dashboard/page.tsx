@@ -1,95 +1,74 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/providers/auth-provider";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import PageContainer from "@/components/app-page-container";
+import AppPageHeader from "@/components/app-page-header";
+import AppStatCard from "@/components/app-stat-card";
 
-const stats = [
-  {
-    title: "Volume Today",
-    value: "₦2,438,900",
-    change: "+12.4% vs yesterday",
-    color: "bg-emerald-500",
-  },
-  {
-    title: "Success Rate",
-    value: "96.2%",
-    change: "+0.8pt",
-    color: "bg-emerald-500",
-  },
-  {
-    title: "SMS Sent Today",
-    value: "4,812",
-    change: "98.7% delivered",
-    color: "bg-amber-500",
-  },
-  {
-    title: "Avg Settlement",
-    value: "1.8s",
-    change: "0.3s faster",
-    color: "bg-teal-500",
-  },
-];
+import {
+  ArrowLeftRight,
+  CreditCard,
+  SquareUser,
+} from "lucide-react";
+
+import DashboardModal from "@/components/dashboard-modal";
+import RecentTransactions from "@/components/recent-transaction";
+
+import { useUsers } from "@/components/providers/users-provider";
+import { useTransactions } from "@/components/providers/transactions-provider";
+import { useProviders } from "@/components/providers/providers-provider";
 
 export default function Dashboard() {
-  const router = useRouter();
-  const { logout, user } = useAuth();
+  const {
+    users,
+    loading: usersLoading,
+  } = useUsers();
 
-  async function handleLogout() {
-    await logout();
-    router.replace("/login");
-  }
+  const {
+    transactions,
+    loading: transactionsLoading,
+  } = useTransactions();
+
+  const { providers, loading: providersLoading} = useProviders();
+
+  console.log("Users:", users);
+  console.log("Transactions:", transactions);
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      {/* Header */}
-      <header className="flex items-center justify-between border-b bg-white px-8 py-4">
-        <div>
-          <p className="text-xs text-gray-500">Gateway</p>
-          <h1 className="text-xl font-bold text-slate-900">Transactions</h1>
-          {user ? (
-            <p className="text-sm text-muted-foreground">
-              Signed in as {user.email}
-            </p>
-          ) : null}
-        </div>
+    <PageContainer className="min-h-screen space-y-2 p-4">
+      <AppPageHeader
+        title="Dashboard"
+        description="Overview of your Payment Gateway and SMS platform."
+        action={<Button>Export</Button>}
+      />
 
-        <div className="flex gap-3">
-          <div className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2">
-            <Search className="h-4 w-4 text-gray-400" />
-            <input
-              placeholder="Search transactions, logs..."
-              className="w-fit border-none bg-transparent text-sm outline-none"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              {user ? user.email : "My Account"}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+      <div className="grid gap-5 md:grid-cols-3 xl:grid-cols-3">
+        <AppStatCard
+          title="Users"
+          value={usersLoading ? "..." : users.length}
+          icon={<SquareUser className="h-5 w-5" />}
+          subtitle="All users"
+        />
 
-      {/* Dashboard */}
-      <main className="p-8"></main>
-    </div>
+        <AppStatCard
+          title="Providers"
+          value={providersLoading ? "..." : providers.length}
+          icon={<CreditCard className="h-5 w-5" />}
+          subtitle="All providers"
+        />
+
+        <AppStatCard
+          title="Transactions"
+          value={transactionsLoading ? "..." : transactions.length}
+          icon={<ArrowLeftRight className="h-5 w-5" />}
+          subtitle="All transactions"
+        />
+      </div>
+
+      <div className="mt-5 grid gap-6 lg:grid-cols-2">
+        <DashboardModal />
+        <RecentTransactions />
+      </div>
+    </PageContainer>
   );
 }

@@ -1,247 +1,254 @@
 "use client";
 
+import { useCallback, useMemo, useState } from "react";
+
 import { DataTable } from "@/components/table/app-table";
-import React, { useEffect } from "react";
-import { columns } from "./columns";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useForm } from "@tanstack/react-form";
-import { Button } from "@/components/ui/button";
-import { useLoading } from "@/hooks/use-loading";
 import { Loader } from "@/components/ui/loader";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import * as z from "zod";
 import { notify } from "@/lib/toast";
 
-const userSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(2).max(100),
-  password: z.string().min(6).max(100),
-});
+import AppPageHeader from "@/components/app-page-header";
+import PageContainer from "@/components/app-page-container";
+
+import NewUserDialog from "@/components/create-user-dialog";
+import EditUserDialog from "@/components/edit-user-dialog";
+import EditStatusDialog from "@/components/edit-status-dialog";
+import EditRoleDialog from "@/components/edit-role-dialog";
+
+import { useUsers } from "@/components/providers/users-provider";
+
+import { getColumns, type User } from "./columns";
 
 export default function Users() {
-  const [users, setUsers] = React.useState([]);
-  const { loading, withLoading } = useLoading();
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      name: "",
-      password: "",
-    },
-    validators: {
-      onSubmit: userSchema,
-    },
-    onSubmit: async ({ value }) => {
-      try {
-        console.log(value);
-        await withLoading(async () => {
-          const response = await fetch("/api/users", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(value),
-          });
+  const {
+    users,
+    loading: loadingUsers,
+    refreshUsers,
+  } = useUsers();
 
-          if (!response.ok) {
-            throw new Error("Failed to create user");
-          }
+  const [submitting, setSubmitting] = useState(false);
 
-          const data = await response.json();
-          await reloadUsers();
-          notify.success("User created Successfully");
-        });
-      } catch (error) {
-        console.error("Error creating user:", error);
-        notify.error("Something occured");
-      }
-    },
-  });
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
-  const reloadUsers = async () => {
-    const result = await fetchUsers();
-    setUsers(result.users.data.data.users);
-  };
-  async function fetchUsers() {
-    const response = await fetch("/api/users", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [selectedRoleUser, setSelectedRoleUser] = useState<User | null>(null);
+  const [newRole, setNewRole] = useState("");
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch users");
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [selectedStatusUser, setSelectedStatusUser] = useState<User | null>(null);
+
+
+  const reloadUsers = useCallback(async () => { await refreshUsers() }, [refreshUsers]); //refresh coming from users provider
+  
+  const handleEdit = useCallback((user: User) => {
+    setEditingUser(user);
+    setEditDialogOpen(true);}, []);
+
+  const openRoleDialog = useCallback((user: User) => {
+    setSelectedRoleUser(user);
+    setNewRole(user.role ?? "");
+    setRoleDialogOpen(true);
+  }, []);
+
+  /*
+   * Submit role change
+   */
+  const submitRoleChange = useCallback(async () => {
+    if (!selectedRoleUser) {
+      notify.error("No user selected");
+      return;
     }
 
-    return response.json();
-  }
+    const role = newRole.trim();
+    if (!role) {
+      notify.error("Role is required");
+      return;
+    }
 
-  useEffect(() => {
-    withLoading(fetchUsers)
-      .then((data) => {
-        setUsers(data.users.data.data.users);
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error);
-      });
+    try {
+      setSubmitting(true);
+
+      const response = await fetch(
+        `/api/users/${selectedRoleUser.id}/role`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ role }),
+        }
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ??
+            data?.message ??
+            "Failed to update user role"
+        );
+      }
+
+      /*
+       * Refresh users through the provider
+       */
+      await reloadUsers();
+
+      setRoleDialogOpen(false);
+      setSelectedRoleUser(null);
+      setNewRole("");
+
+      notify.success(`User role changed to ${role}`);
+    } catch (error) {
+      notify.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update user role"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }, [selectedRoleUser, newRole, reloadUsers]);
+
+
+  const openStatusDialog = useCallback((user: User) => {
+    setSelectedStatusUser(user);
+    setStatusDialogOpen(true);
   }, []);
+
+
+  const submitStatusChange = useCallback(async () => {
+    if (!selectedStatusUser) {
+      notify.error("No user selected");
+      return;
+    }
+
+    const currentStatus = selectedStatusUser.status;
+
+    const newStatus =
+      currentStatus === "active"
+        ? "blocked"
+        : "active";
+
+    try {
+      setSubmitting(true);
+
+      const response = await fetch(
+        `/api/users/${selectedStatusUser.id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        }
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ??
+            data?.message ??
+            "Failed to update user status"
+        );
+      }
+
+
+      await reloadUsers();
+
+      setStatusDialogOpen(false);
+      setSelectedStatusUser(null);
+
+      notify.success(
+        `User status changed to ${newStatus}`
+      );
+    } catch (error) {
+      notify.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update user status"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }, [selectedStatusUser, reloadUsers]);
+
+  /*
+   * Delete user
+   */
+  const handleDelete = useCallback((user: User) => {
+    notify.error(
+      `Delete ${user.email} is not implemented yet`
+    );
+  }, []);
+
+
+  const userColumns = useMemo(
+    () =>
+      getColumns({
+        onEdit: handleEdit,
+        onChangeRole: openRoleDialog,
+        onChangeStatus: openStatusDialog,
+        onDelete: handleDelete,
+      }),
+    [
+      handleEdit,
+      openRoleDialog,
+      openStatusDialog,
+      handleDelete,
+    ]
+  );
+
   return (
-    <div className="min-h-screen bg-slate-100 px-8">
-      <div>
-        <h1 className="text-2xl font-bold mb-4">Users</h1>
-      </div>
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
+    <PageContainer className="min-h-screen space-y-2 p-4">
+      <AppPageHeader
+        title="Users"
+        description="Manage system administrators and users."
+        action={
+          <NewUserDialog
+            onUserCreated={reloadUsers}
+          />
+        }
+      />
+
+      {loadingUsers ? (
+        <div className="flex min-h-75 items-center justify-center">
           <Loader text="Fetching users..." />
         </div>
       ) : (
-        <div className="min-h-screen bg-slate-100">
-          <div className="align-right mb-4 flex justify-end">
-            <Dialog>
-              <form
-                id="create-user-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  console.log(form.state);
-                  form.handleSubmit();
-                }}
-              >
-                <DialogTrigger
-                  render={<Button variant="outline">Add User</Button>}
-                />
-                <DialogContent className="sm:max-w-106.25">
-                  <DialogHeader className="text-lg font-semibold">
-                    <DialogTitle>Add User</DialogTitle>
-                    <DialogDescription>
-                      Create new admins, they will be added to the system.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup>
-                    <form.Field
-                      name="email"
-                      children={(field) => {
-                        const isInvalid =
-                          field.state.meta.isTouched &&
-                          !field.state.meta.isValid;
-                        return (
-                          <Field data-invalid={isInvalid}>
-                            <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                            <Input
-                              id={field.name}
-                              name={field.name}
-                              value={field.state.value}
-                              onBlur={field.handleBlur}
-                              onChange={(e) =>
-                                field.handleChange(e.target.value)
-                              }
-                              aria-invalid={isInvalid}
-                              placeholder="Admin Email"
-                              autoComplete="off"
-                            />
-                            {isInvalid && (
-                              <FieldError errors={field.state.meta.errors} />
-                            )}
-                          </Field>
-                        );
-                      }}
-                    />
-                    <form.Field
-                      name="name"
-                      children={(field) => {
-                        const isInvalid =
-                          field.state.meta.isTouched &&
-                          !field.state.meta.isValid;
-                        return (
-                          <Field data-invalid={isInvalid}>
-                            <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                            <Input
-                              id={field.name}
-                              name={field.name}
-                              value={field.state.value}
-                              onBlur={field.handleBlur}
-                              onChange={(e) =>
-                                field.handleChange(e.target.value)
-                              }
-                              aria-invalid={isInvalid}
-                              placeholder="Admin Name"
-                              autoComplete="off"
-                            />
-                            {isInvalid && (
-                              <FieldError errors={field.state.meta.errors} />
-                            )}
-                          </Field>
-                        );
-                      }}
-                    />
-
-                    <form.Field
-                      name="password"
-                      children={(field) => {
-                        const isInvalid =
-                          field.state.meta.isTouched &&
-                          !field.state.meta.isValid;
-                        return (
-                          <Field data-invalid={isInvalid}>
-                            <FieldLabel htmlFor={field.name}>
-                              Password
-                            </FieldLabel>
-                            <Input
-                              id={field.name}
-                              type="password"
-                              name={field.name}
-                              value={field.state.value}
-                              onBlur={field.handleBlur}
-                              onChange={(e) =>
-                                field.handleChange(e.target.value)
-                              }
-                              aria-invalid={isInvalid}
-                              autoComplete="off"
-                            />
-                            {isInvalid && (
-                              <FieldError errors={field.state.meta.errors} />
-                            )}
-                          </Field>
-                        );
-                      }}
-                    />
-                  </FieldGroup>
-
-                  <DialogFooter>
-                    <Field orientation="horizontal">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => form.reset()}
-                      >
-                        Reset
-                      </Button>
-                      <Button type="submit" form="create-user-form">
-                        Submit
-                      </Button>
-                    </Field>
-                  </DialogFooter>
-                </DialogContent>
-              </form>
-            </Dialog>
-          </div>
-          <DataTable columns={columns} data={users} />
-        </div>
+        <DataTable
+          columns={userColumns}
+          data={users}
+        />
       )}
-    </div>
+
+      <EditUserDialog
+        user={editingUser}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onUserUpdated={reloadUsers}
+      />
+
+      <EditRoleDialog
+        user={selectedRoleUser}
+        open={roleDialogOpen}
+        role={newRole}
+        submitting={submitting}
+        onRoleChange={setNewRole}
+        onSubmit={submitRoleChange}
+        onOpenChange={setRoleDialogOpen}
+      />
+
+      <EditStatusDialog
+        user={selectedStatusUser}
+        open={statusDialogOpen}
+        submitting={submitting}
+        onSubmit={submitStatusChange}
+        onOpenChange={setStatusDialogOpen}
+      />
+    </PageContainer>
   );
 }
