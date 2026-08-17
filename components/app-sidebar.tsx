@@ -6,8 +6,9 @@ import {
   CreditCard,
   ArrowRightLeft,
   Receipt,
-  FolderKanban ,
+  FolderKanban,
 } from "lucide-react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -39,7 +40,6 @@ const menuItems = [
     href: "/users",
     icon: Receipt,
   },
-
   {
     title: "Loan Products",
     href: "/loan-products",
@@ -47,7 +47,7 @@ const menuItems = [
   },
 ];
 
-const SideBar = () => {
+export default function SideBar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b p-4">
@@ -58,18 +58,24 @@ const SideBar = () => {
 
       <SidebarContent>
         <SidebarMenu>
-          {menuItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                <Link href={item.href} className="flex items-center gap-2">
-                  <item.icon className="size-7" />
-                  <span className="text-sm group-data-[collapsible=icon]:hidden">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  render={<Link href={item.href} />}
+                >
+                  <Icon className="size-5" />
+
+                  <span className="group-data-[collapsible=icon]:hidden">
                     {item.title}
                   </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarContent>
 
@@ -78,6 +84,4 @@ const SideBar = () => {
       </SidebarFooter>
     </Sidebar>
   );
-};
-
-export default SideBar;
+}

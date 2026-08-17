@@ -4,15 +4,23 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
   type ReactNode,
 } from "react";
 
+export type Requirement = {
+  productId: string;
+  minBalance: number;
+};
+
+export type RequiredSavingsProducts = {
+  mode: "all" | "any";
+  requirements: Requirement[];
+};
+
 export type LoanProduct = {
-  id: string;
   name: string;
-  description?: string;
+  description: string;
   cbsProductId: number;
   minPrincipal: number;
   maxPrincipal: number;
@@ -20,53 +28,66 @@ export type LoanProduct = {
   termFrequency: number;
   termFrequencyType: number;
   numberOfRepayments: number;
-  active: boolean;
+  repaymentEvery: number;
+  repaymentFrequencyType: number;
+  minActiveMonths: number;
+  maxActiveLoans: number;
+  noLoansInArrears: boolean;
+  autoDisburse: boolean;
+  requiredSavingsProducts: RequiredSavingsProducts;
 };
 
 interface ProductsContextType {
   products: LoanProduct[];
   loading: boolean;
+  error: string | null;
+  fetchProducts: () => Promise<void>;
   reloadProducts: () => Promise<void>;
 }
 
 const ProductsContext =
-  createContext<ProductsContextType | undefined>(undefined);
+  createContext<ProductsContextType | null>(null);
 
 export function ProductsProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  const [products, setProducts] = useState<LoanProduct[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<LoanProduct[]>(
+    []
+  );
+
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
 
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
 
       const response = await fetch("/api/loan-products", {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         cache: "no-store",
       });
 
-      const data = await response.json().catch(() => null);
+      const result = await response
+        .json()
+        .catch(() => null);
 
       if (!response.ok) {
         throw new Error(
-          data?.error ??
-            data?.message ??
+          result?.error ??
+            result?.message ??
             "Failed to fetch loan products"
         );
       }
 
-      console.log("Products response:", data);
-
       const productData =
-        data?.data?.data ??
-        data?.data ??
+        result?.products?.data?.data ??
+        result?.data?.products ??
+        result?.products ??
         [];
 
       setProducts(
@@ -76,18 +97,24 @@ export function ProductsProvider({
       );
     } catch (error) {
       console.error(
-        "Error fetching products:",
+        "Error fetching loan products:",
         error
       );
 
       setProducts([]);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch loan products"
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchProducts();
+  const reloadProducts = useCallback(async () => {
+    await fetchProducts();
   }, [fetchProducts]);
 
   return (
@@ -95,7 +122,9 @@ export function ProductsProvider({
       value={{
         products,
         loading,
-        reloadProducts: fetchProducts,
+        error,
+        fetchProducts,
+        reloadProducts,
       }}
     >
       {children}

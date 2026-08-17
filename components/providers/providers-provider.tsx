@@ -4,32 +4,39 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
   type ReactNode,
 } from "react";
 
 export type ProviderSetting = {
-  key: string;
-  value: string;
-  encrypted: boolean;
+  ID: string;
+  ProviderID: string;
+  Key: string;
+  Value: string;
+  Encrypted: boolean;
+  CreatedAt?: string;
+  UpdatedAt?: string;
 };
 
 export type Provider = {
-  id: string;
-  name: string;
-  category: string;
-  driver: string;
-  environment: string;
-  active: boolean;
-  is_default: boolean;
-  priority: number;
-  settings?: ProviderSetting[];
+  ID: string;
+  Name: string;
+  Category: string;
+  Driver: string;
+  Environment: string;
+  Active: boolean;
+  IsDefault: boolean;
+  Priority: number;
+  Settings: ProviderSetting[];
+  CreatedAt?: string;
+  UpdatedAt?: string;
 };
 
 type ProvidersContextType = {
   providers: Provider[];
   loading: boolean;
+  error: string | null;
+  fetchProviders: () => Promise<void>;
   reloadProviders: () => Promise<void>;
 };
 
@@ -42,23 +49,20 @@ export function ProvidersProvider({
   children: ReactNode;
 }) {
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchProviders = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
 
       const response = await fetch("/api/providers", {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         cache: "no-store",
       });
 
       const result = await response.json();
-
-      console.log("Providers response:", result);
 
       if (!response.ok) {
         throw new Error(
@@ -69,12 +73,7 @@ export function ProvidersProvider({
       }
 
       const providerData =
-        result?.providers?.data?.data ??
-        result?.providers?.data ??
-        result?.providers ??
-        result?.data?.providers?.data?.data ??
-        result?.data?.providers ??
-        [];
+        result?.providers?.data?.data ?? [];
 
       setProviders(
         Array.isArray(providerData)
@@ -88,13 +87,19 @@ export function ProvidersProvider({
       );
 
       setProviders([]);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch providers"
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchProviders();
+  const reloadProviders = useCallback(async () => {
+    await fetchProviders();
   }, [fetchProviders]);
 
   return (
@@ -102,7 +107,9 @@ export function ProvidersProvider({
       value={{
         providers,
         loading,
-        reloadProviders: fetchProviders,
+        error,
+        fetchProviders,
+        reloadProviders,
       }}
     >
       {children}
@@ -113,7 +120,7 @@ export function ProvidersProvider({
 export function useProviders() {
   const context = useContext(ProvidersContext);
 
-  if (context === null) {
+  if (!context) {
     throw new Error(
       "useProviders must be used within ProvidersProvider"
     );

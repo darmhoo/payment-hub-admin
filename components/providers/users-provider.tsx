@@ -4,7 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+
   useState,
 } from "react";
 
@@ -13,7 +13,7 @@ export interface User {
   email: string;
   name: string;
   role: "admin" | "super_admin";
-  status?: string;
+  status?: "active" | "blocked";
 }
 
 interface UsersContextType {
@@ -70,10 +70,6 @@ export function UsersProvider({
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
 
   const refreshUsers = async () => {
     await fetchUsers();

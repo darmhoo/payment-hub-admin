@@ -158,52 +158,55 @@ export const getColumns = ({
     },
   },
 
-  {
-    id: "actions",
-    header: "Actions",
+{
+  id: "actions",
+  header: "Actions",
 
-    enableSorting: false,
-    enableHiding: false,
+  enableSorting: false,
+  enableHiding: false,
 
-    cell: ({ row }) => {
-      const user = row.original;
+  cell: ({ row }) => {
+    const user = row.original;
 
-      return (
-        <DropdownMenu>
-  <DropdownMenuTrigger>
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8"
-    >
-      <MoreHorizontal className="h-4 w-4" />
-    </Button>
-  </DropdownMenuTrigger>
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              aria-label={`Actions for ${user.name}`}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          }
+        />
 
-  <DropdownMenuContent align="end">
-    <DropdownMenuItem onClick={() => onEdit(user)}>
-      Edit User
-    </DropdownMenuItem>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => onEdit(user)}>
+            Edit User
+          </DropdownMenuItem>
 
-    <DropdownMenuItem onClick={() => onChangeRole(user)}>
-      Change Role
-    </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onChangeRole(user)}>
+            Change Role
+          </DropdownMenuItem>
 
-    <DropdownMenuItem onClick={() => onChangeStatus(user)}>
-      Change Status
-    </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onChangeStatus(user)}>
+            Change Status
+          </DropdownMenuItem>
 
-    <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-    <DropdownMenuItem
-      className="text-red-600 focus:text-red-600"
-      onClick={() => onDelete(user)}
-    >
-      Delete User
-    </DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
-      );
-    },
+          <DropdownMenuItem
+            className="text-red-600 focus:text-red-600"
+            onClick={() => onDelete(user)}
+          >
+            Delete User
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   },
+},
 ];
