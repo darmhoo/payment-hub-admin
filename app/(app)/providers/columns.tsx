@@ -1,24 +1,49 @@
 "use client";
 
+import { MoreHorizontal } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { Button } from "@/components/ui/button";
 
 export type Provider = {
   ID: string;
-  driver: string;
-  category: string;
-  name: string;
-  priority: string;
-  status?: "pending" | "processing" | "success" | "failed";
-  email?: string;
+  Name: string;
+  Category: string;
+  Driver: string;
+  Environment: string;
+  Active: boolean;
+  IsDefault: boolean;
+  Priority: number;
+  Settings: {
+    ID: string;
+    ProviderID: string;
+    Key: string;
+    Value: string;
+    Encrypted: boolean;
+  }[];
 };
 
-const columnHelper = createColumnHelper<Provider>();
+interface ProviderColumnActions {
+  onView: (provider: Provider) => void;
+  onEdit: (provider: Provider) => void;
+}
 
-export const columns: ColumnDef<Provider, unknown>[] = [
-
+export const getColumns = ({
+  onView,
+  onEdit,
+}: ProviderColumnActions): ColumnDef<Provider>[] => [
   {
     id: "select",
+
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
@@ -43,49 +68,79 @@ export const columns: ColumnDef<Provider, unknown>[] = [
         aria-label="Select row"
       />
     ),
+
     enableSorting: false,
     enableHiding: false,
   },
 
-    
   {
     id: "sn",
     header: "S/N",
-    cell: (info) => info.row.index + 1,
+    cell: ({ row }) => row.index + 1,
   },
+
   {
     accessorKey: "Driver",
     header: "Driver",
   },
+
   {
     accessorKey: "Category",
     header: "Category",
   },
+
   {
     accessorKey: "Name",
     header: "Name",
   },
+
   {
     accessorKey: "Priority",
     header: "Priority",
   },
 
   {
+    id: "actions",
     header: "Actions",
-    cell: (info) => {
-      console.log("Row Info:", info); // Log the entire row info to the console
-      const provider = info.row.original;
-      console.log("Provider ID:", provider.ID); // Log the provider ID to the console
+
+    cell: ({ row }) => {
+      const provider = row.original;
+
       return (
-        <div className="flex gap-2">
-          <a
-            href={`/providers/${provider.ID}`}
-            className="text-blue-500 hover:underline"
-          >
-            View
-          </a>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">
+                  Open actions
+                </span>
+              </Button>
+            }
+          />
+
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => onView(provider)}
+            >
+              View Provider
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => onEdit(provider)}
+            >
+              Edit Provider
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
+
+    enableSorting: false,
+    enableHiding: false,
   },
 ];

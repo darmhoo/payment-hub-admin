@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -14,6 +13,8 @@ import type { Transaction } from "@/app/(app)/transactions/column";
 interface TransactionsContextType {
   transactions: Transaction[];
   loading: boolean;
+  error: string | null;
+  fetchTransactions: () => Promise<void>;
   refreshTransactions: () => Promise<void>;
 }
 
@@ -27,25 +28,30 @@ export function TransactionsProvider({
 }: {
   children: ReactNode;
 }) {
-  const [transactions, setTransactions] = useState<Transaction[]>(
-    []
-  );
+  const [transactions, setTransactions] =
+    useState<Transaction[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
 
   const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
 
-      const response = await fetch("/api/transactions", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      });
+      const response = await fetch(
+        "/api/transactions",
+        {
+          method: "GET",
+          cache: "no-store",
+        }
+      );
 
-      const data = await response.json().catch(() => null);
+      const data = await response
+        .json()
+        .catch(() => null);
 
       if (!response.ok) {
         throw new Error(
@@ -56,7 +62,10 @@ export function TransactionsProvider({
       }
 
       const transactionData =
-        data?.transaction?.data?.data ?? [];
+        data?.transaction?.data?.data ??
+        data?.data?.transactions ??
+        data?.transactions ??
+        [];
 
       setTransactions(
         Array.isArray(transactionData)
@@ -70,21 +79,32 @@ export function TransactionsProvider({
       );
 
       setTransactions([]);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch transactions"
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+  const refreshTransactions = useCallback(
+    async () => {
+      await fetchTransactions();
+    },
+    [fetchTransactions]
+  );
 
   return (
     <TransactionsContext.Provider
       value={{
         transactions,
         loading,
-        refreshTransactions: fetchTransactions,
+        error,
+        fetchTransactions,
+        refreshTransactions,
       }}
     >
       {children}
@@ -93,7 +113,9 @@ export function TransactionsProvider({
 }
 
 export function useTransactions() {
-  const context = useContext(TransactionsContext);
+  const context = useContext(
+    TransactionsContext
+  );
 
   if (!context) {
     throw new Error(

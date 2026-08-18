@@ -3,7 +3,6 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 import { AuthProvider } from "@/components/providers/auth-provider";
-import { ThemeProvider } from "@/components/theme-provider";
 import { UsersProvider } from "@/components/providers/users-provider";
 import { TransactionsProvider } from "@/components/providers/transactions-provider";
 import { ProvidersProvider } from "@/components/providers/providers-provider";
@@ -24,13 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body suppressHydrationWarning className="min-h-screen flex flex-col antialiased">
           <AuthProvider>
             <UsersProvider>
               <TransactionsProvider>
@@ -47,7 +40,6 @@ export default function RootLayout({
             richColors
             position="top-right"
           />
-        </ThemeProvider>
       </body>
     </html>
   );
