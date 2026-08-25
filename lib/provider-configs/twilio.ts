@@ -1,26 +1,26 @@
 // lib/provider-configs/twilio.ts
-import { ProviderConfig } from "./types";
+import { ProviderConfig } from './types';
 export const twilioProvider: ProviderConfig = {
-  driver: "twilio",
-  category: "sms",
+  driver: 'twilio',
+  category: 'sms',
 
   fields: [
     {
-      name: "accountSid",
-      label: "Account SID",
-      type: "text",
+      name: 'accountSid',
+      label: 'Account SID',
+      type: 'text',
       encrypted: true,
     },
     {
-      name: "authToken",
-      label: "Auth Token",
-      type: "password",
+      name: 'authToken',
+      label: 'Auth Token',
+      type: 'password',
       encrypted: true,
     },
     {
-      name: "from",
-      label: "From Number",
-      type: "text",
+      name: 'from',
+      label: 'From Number',
+      type: 'text',
       encrypted: false,
     },
   ],
@@ -28,17 +28,17 @@ export const twilioProvider: ProviderConfig = {
   buildSettings(values) {
     return [
       {
-        key: "account_sid",
+        key: 'account_sid',
         value: values.accountSid,
         encrypted: true,
       },
       {
-        key: "auth_token",
+        key: 'auth_token',
         value: values.authToken,
         encrypted: true,
       },
       {
-        key: "from",
+        key: 'from',
         value: values.from,
         encrypted: false,
       },

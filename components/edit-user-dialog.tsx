@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useForm } from "@tanstack/react-form";
-import * as z from "zod";
+import { useEffect } from 'react';
+import { useForm } from '@tanstack/react-form';
+import * as z from 'zod';
 
 import {
   Dialog,
@@ -11,26 +11,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Loader } from "@/components/ui/loader";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Loader } from '@/components/ui/loader';
 
-import { notify } from "@/lib/toast";
+import { notify } from '@/lib/toast';
 
-import type { User } from "@/app/(app)/users/columns";
+import type { User } from '@/app/(app)/users/columns';
 
 const editUserSchema = z.object({
-  email: z.email("Invalid email address"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.email('Invalid email address'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
   password: z.string(),
 });
 
@@ -49,9 +44,9 @@ export default function EditUserDialog({
 }: EditUserDialogProps) {
   const form = useForm({
     defaultValues: {
-      email: "",
-      name: "",
-      password: "",
+      email: '',
+      name: '',
+      password: '',
     },
 
     validators: {
@@ -60,7 +55,7 @@ export default function EditUserDialog({
 
     onSubmit: async ({ value }) => {
       if (!user) {
-        notify.error("No user selected");
+        notify.error('No user selected');
         return;
       }
 
@@ -75,52 +70,34 @@ export default function EditUserDialog({
             : {}),
         };
 
-        const response = await fetch(
-          `/api/users/${user.id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          }
-        );
+        const response = await fetch(`/api/users/${user.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
 
-        const data = await response
-          .json()
-          .catch(() => null);
+        const data = await response.json().catch(() => null);
 
-        console.log("Update user:", {
+        console.log('Update user:', {
           status: response.status,
           body,
           data,
         });
 
         if (!response.ok) {
-          throw new Error(
-            data?.error ??
-              data?.message ??
-              "Failed to update user"
-          );
+          throw new Error(data?.error ?? data?.message ?? 'Failed to update user');
         }
         await onUserUpdated();
         onOpenChange(false);
         form.reset();
 
-        notify.success(
-          "User updated successfully"
-        );
+        notify.success('User updated successfully');
       } catch (error) {
-        console.error(
-          "Error updating user:",
-          error
-        );
+        console.error('Error updating user:', error);
 
-        notify.error(
-          error instanceof Error
-            ? error.message
-            : "Failed to update user"
-        );
+        notify.error(error instanceof Error ? error.message : 'Failed to update user');
       }
     },
   });
@@ -128,35 +105,28 @@ export default function EditUserDialog({
   useEffect(() => {
     if (!user) {
       form.reset({
-        email: "",
-        name: "",
-        password: "",
+        email: '',
+        name: '',
+        password: '',
       });
 
       return;
     }
 
     form.reset({
-      email: user.email ?? "",
-      name: user.name ?? "",
-      password: "",
+      email: user.email ?? '',
+      name: user.name ?? '',
+      password: '',
     });
   }, [user]);
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-125">
         <DialogHeader>
-          <DialogTitle>
-            Edit User
-          </DialogTitle>
+          <DialogTitle>Edit User</DialogTitle>
 
-          <DialogDescription>
-            Update the user&apos;s account information.
-          </DialogDescription>
+          <DialogDescription>Update the user&apos;s account information.</DialogDescription>
         </DialogHeader>
 
         <form
@@ -172,34 +142,20 @@ export default function EditUserDialog({
           <FieldGroup>
             <form.Field name="email">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched &&
-                  !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel>
-                      Email
-                    </FieldLabel>
+                    <FieldLabel>Email</FieldLabel>
 
                     <Input
                       type="email"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) =>
-                        field.handleChange(
-                          event.target.value
-                        )
-                      }
+                      onChange={(event) => field.handleChange(event.target.value)}
                     />
 
-                    {isInvalid && (
-                      <FieldError
-                        errors={
-                          field.state.meta.errors
-                        }
-                      />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
@@ -207,34 +163,20 @@ export default function EditUserDialog({
 
             <form.Field name="name">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched &&
-                  !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel>
-                      Name
-                    </FieldLabel>
+                    <FieldLabel>Name</FieldLabel>
 
                     <Input
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      placeholder={field.form.getFieldValue("name")}
-                      onChange={(event) =>
-                        field.handleChange(
-                          event.target.value
-                        )
-                      }
+                      placeholder={field.form.getFieldValue('name')}
+                      onChange={(event) => field.handleChange(event.target.value)}
                     />
 
-                    {isInvalid && (
-                      <FieldError
-                        errors={
-                          field.state.meta.errors
-                        }
-                      />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
@@ -243,19 +185,13 @@ export default function EditUserDialog({
             <form.Field name="password">
               {(field) => (
                 <Field>
-                  <FieldLabel>
-                    New Password
-                  </FieldLabel>
+                  <FieldLabel>New Password</FieldLabel>
 
                   <Input
                     type="password"
                     value={field.state.value}
                     onBlur={field.handleBlur}
-                    onChange={(event) =>
-                      field.handleChange(
-                        event.target.value
-                      )
-                    }
+                    onChange={(event) => field.handleChange(event.target.value)}
                     placeholder="Leave blank to keep current password"
                   />
                 </Field>
@@ -276,24 +212,16 @@ export default function EditUserDialog({
             Cancel
           </Button>
 
-          <form.Subscribe
-            selector={(state) =>
-              state.isSubmitting
-            }
-          >
+          <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
-              <Button
-                type="submit"
-                form="edit-user-form"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" form="edit-user-form" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader />
                     Saving...
                   </>
                 ) : (
-                  "Save Changes"
+                  'Save Changes'
                 )}
               </Button>
             )}

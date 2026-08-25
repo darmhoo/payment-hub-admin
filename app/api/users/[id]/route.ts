@@ -1,39 +1,32 @@
-import { NextResponse } from "next/server";
-import apiClient from "@/lib/axios-client";
+import { NextResponse } from 'next/server';
+import apiClient from '@/lib/axios-client';
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const body = await request.json();
 
-    const response = await apiClient.patch(
-      `/internal/users/${id}`, body
-    );
+    const response = await apiClient.patch(`/internal/users/${id}`, body);
 
     const data = response.data;
+
 
     if (!response.status || response.status >= 400) {
       return NextResponse.json(
         {
-          error:
-            data?.message ?? "Unable to update user role.",
+          error: data?.message ?? 'Unable to update user role.',
         },
         { status: response.status }
       );
     }
 
     return NextResponse.json({
-      message:
-        data?.message ?? "User role updated successfully.",
+      message: data?.message ?? 'User role updated successfully.',
       data,
     });
   } catch (error: unknown) {
-    const status =
-      (error as { response?: { status?: number } })?.response
-        ?.status ?? 502;
+    const status = (error as { response?: { status?: number } })?.response?.status ?? 502;
+    console.log("error: ", error)
 
     const message = (
       error as {
@@ -47,9 +40,7 @@ export async function PATCH(
 
     return NextResponse.json(
       {
-        error:
-          message ??
-          "Unable to reach the backend server.",
+        error: message ?? 'Unable to reach the backend server.',
       },
       { status }
     );

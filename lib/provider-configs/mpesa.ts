@@ -1,63 +1,63 @@
-import { ProviderConfig } from "./types";
+import { ProviderConfig } from './types';
 export const mpesaProvider: ProviderConfig = {
-  driver: "mpesa",
-  category: "payment",
+  driver: 'mpesa',
+  category: 'payment',
 
   fields: [
     {
-      name: "consumerKey",
-      label: "Consumer Key",
-      type: "text",
+      name: 'consumerKey',
+      label: 'Consumer Key',
+      type: 'text',
       encrypted: true,
-      placeholder: "Enter consumer key",
+      placeholder: 'Enter consumer key',
       required: true,
     },
     {
-      name: "consumerSecret",
-      label: "Consumer Secret",
-      type: "password",
+      name: 'consumerSecret',
+      label: 'Consumer Secret',
+      type: 'password',
       encrypted: true,
-      placeholder: "Enter consumer secret",
+      placeholder: 'Enter consumer secret',
       required: true,
     },
     {
-      name: "shortCode",
-      label: "Short Code",
-      type: "text",
+      name: 'shortCode',
+      label: 'Short Code',
+      type: 'text',
       encrypted: false,
-      placeholder: "e.g. 174379",
+      placeholder: 'e.g. 174379',
       required: true,
     },
     {
-      name: "passkey",
-      label: "Passkey",
-      type: "password",
+      name: 'passkey',
+      label: 'Passkey',
+      type: 'password',
       encrypted: true,
-      placeholder: "Enter M-Pesa passkey",
+      placeholder: 'Enter M-Pesa passkey',
       required: true,
     },
     {
-      name: "callbackUrl",
-      label: "Callback URL",
-      type: "url",
+      name: 'callbackUrl',
+      label: 'Callback URL',
+      type: 'url',
       encrypted: false,
-      placeholder: "https://example.com/api/mpesa/callback",
+      placeholder: 'https://example.com/api/mpesa/callback',
       required: true,
     },
     {
-      name: "initiatorName",
-      label: "Initiator Name",
-      type: "text",
+      name: 'initiatorName',
+      label: 'Initiator Name',
+      type: 'text',
       encrypted: true,
-      placeholder: "Enter initiator name",
+      placeholder: 'Enter initiator name',
       required: false,
     },
     {
-      name: "securityCredential",
-      label: "Security Credential",
-      type: "password",
+      name: 'securityCredential',
+      label: 'Security Credential',
+      type: 'password',
       encrypted: true,
-      placeholder: "Enter security credential",
+      placeholder: 'Enter security credential',
       required: false,
     },
   ],
@@ -65,27 +65,27 @@ export const mpesaProvider: ProviderConfig = {
   buildSettings(values) {
     const settings = [
       {
-        key: "consumer_key",
+        key: 'consumer_key',
         value: values.consumerKey,
         encrypted: true,
       },
       {
-        key: "consumer_secret",
+        key: 'consumer_secret',
         value: values.consumerSecret,
         encrypted: true,
       },
       {
-        key: "short_code",
+        key: 'short_code',
         value: values.shortCode,
         encrypted: false,
       },
       {
-        key: "passkey",
+        key: 'passkey',
         value: values.passkey,
         encrypted: true,
       },
       {
-        key: "callback_url",
+        key: 'callback_url',
         value: values.callbackUrl,
         encrypted: false,
       },
@@ -93,7 +93,7 @@ export const mpesaProvider: ProviderConfig = {
 
     if (values.initiatorName) {
       settings.push({
-        key: "initiator_name",
+        key: 'initiator_name',
         value: values.initiatorName,
         encrypted: true,
       });
@@ -101,7 +101,7 @@ export const mpesaProvider: ProviderConfig = {
 
     if (values.securityCredential) {
       settings.push({
-        key: "security_credential",
+        key: 'security_credential',
         value: values.securityCredential,
         encrypted: true,
       });

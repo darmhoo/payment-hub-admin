@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,15 +7,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Loader } from "@/components/ui/loader";
-import { FieldLabel } from "@/components/ui/field";
-import { notify } from "@/lib/toast";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Loader } from '@/components/ui/loader';
+import { FieldLabel } from '@/components/ui/field';
+import { notify } from '@/lib/toast';
 
-import type { User } from "@/app/(app)/users/columns";
+import type { User } from '@/app/(app)/users/columns';
 
 interface ChangeRoleDialogProps {
   user: User | null;
@@ -38,7 +38,7 @@ export default function EditRoleDialog({
 }: ChangeRoleDialogProps) {
   const handleSubmit = async () => {
     if (!role.trim()) {
-      notify.error("Role is required");
+      notify.error('Role is required');
       return;
     }
 
@@ -51,32 +51,24 @@ export default function EditRoleDialog({
         <DialogHeader>
           <DialogTitle>Change User Role</DialogTitle>
 
-          <DialogDescription>
-            Change the role for {user?.email}.
-          </DialogDescription>
+          <DialogDescription>Change the role for {user?.email}.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
             <FieldLabel>Current Role</FieldLabel>
 
-            <div className="rounded-md bg-muted px-3 py-2 text-sm">
-              {user?.role || "No role"}
-            </div>
+            <div className="rounded-md bg-muted px-3 py-2 text-sm">{user?.role || 'No role'}</div>
           </div>
 
           <div className="space-y-2">
-            <FieldLabel htmlFor="new-role">
-              New Role
-            </FieldLabel>
+            <FieldLabel htmlFor="new-role">New Role</FieldLabel>
 
             <Input
               id="new-role"
               type="select"
               value={role}
-              onChange={(event) =>
-                onRoleChange(event.target.value)
-              }
+              onChange={(event) => onRoleChange(event.target.value)}
               placeholder="admin"
             />
           </div>
@@ -103,7 +95,7 @@ export default function EditRoleDialog({
                 Changing...
               </>
             ) : (
-              "Change Role"
+              'Change Role'
             )}
           </Button>
         </DialogFooter>

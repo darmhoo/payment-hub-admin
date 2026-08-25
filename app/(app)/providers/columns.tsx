@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { MoreHorizontal } from "lucide-react";
-import type { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from 'lucide-react';
+import type { ColumnDef } from '@tanstack/react-table';
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from '@/components/ui/checkbox';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export type Provider = {
   ID: string;
@@ -37,23 +37,15 @@ interface ProviderColumnActions {
   onEdit: (provider: Provider) => void;
 }
 
-export const getColumns = ({
-  onView,
-  onEdit,
-}: ProviderColumnActions): ColumnDef<Provider>[] => [
+export const getColumns = ({ onView, onEdit }: ProviderColumnActions): ColumnDef<Provider>[] => [
   {
-    id: "select",
+    id: 'select',
 
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        indeterminate={
-          table.getIsSomePageRowsSelected() &&
-          !table.getIsAllPageRowsSelected()
-        }
-        onCheckedChange={(value) =>
-          table.toggleAllPageRowsSelected(!!value)
-        }
+        indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
@@ -62,9 +54,7 @@ export const getColumns = ({
       <Checkbox
         checked={row.getIsSelected()}
         indeterminate={row.getIsSomeSelected()}
-        onCheckedChange={(value) =>
-          row.toggleSelected(!!value)
-        }
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
@@ -74,34 +64,34 @@ export const getColumns = ({
   },
 
   {
-    id: "sn",
-    header: "S/N",
+    id: 'sn',
+    header: 'S/N',
     cell: ({ row }) => row.index + 1,
   },
 
   {
-    accessorKey: "Driver",
-    header: "Driver",
+    accessorKey: 'Driver',
+    header: 'Driver',
   },
 
   {
-    accessorKey: "Category",
-    header: "Category",
+    accessorKey: 'Category',
+    header: 'Category',
   },
 
   {
-    accessorKey: "Name",
-    header: "Name",
+    accessorKey: 'Name',
+    header: 'Name',
   },
 
   {
-    accessorKey: "Priority",
-    header: "Priority",
+    accessorKey: 'Priority',
+    header: 'Priority',
   },
 
   {
-    id: "actions",
-    header: "Actions",
+    id: 'actions',
+    header: 'Actions',
 
     cell: ({ row }) => {
       const provider = row.original;
@@ -110,31 +100,17 @@ export const getColumns = ({
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-              >
+              <Button variant="ghost" size="icon" className="h-8 w-8">
                 <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">
-                  Open actions
-                </span>
+                <span className="sr-only">Open actions</span>
               </Button>
             }
           />
 
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => onView(provider)}
-            >
-              View Provider
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onView(provider)}>View Provider</DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() => onEdit(provider)}
-            >
-              Edit Provider
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(provider)}>Edit Provider</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

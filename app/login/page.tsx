@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/providers/auth-provider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/providers/auth-provider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,11 +25,11 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
+    formData.append('email', email);
+    formData.append('password', password);
 
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
       body: formData,
     });
 
@@ -37,14 +37,13 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (!response.ok) {
-      setError(data.error ?? "Unable to sign in right now.");
+      setError(data.error ?? 'Unable to sign in right now.');
       return;
     }
-    
 
     login({ email });
-    setMessage(data.message ?? "Signed in successfully.");
-    router.replace("/dashboard");
+    setMessage(data.message ?? 'Signed in successfully.');
+    router.replace('/dashboard');
   }
 
   return (
@@ -101,7 +100,7 @@ export default function LoginPage() {
             </div>
 
             <Button className="w-full" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Signing in..." : "Sign In"}
+              {isSubmitting ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
         </CardContent>

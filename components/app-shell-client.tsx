@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Bell } from "lucide-react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Bell } from 'lucide-react';
 
-import SideBar from "@/components/app-sidebar";
-import AppToolbar from "./app-toolbar";
+import SideBar from '@/components/app-sidebar';
+import AppToolbar from './app-toolbar';
 
-import { useAuth } from "@/components/providers/auth-provider";
+import { useAuth } from '@/components/providers/auth-provider';
 
 import {
   DropdownMenu,
@@ -16,33 +16,24 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-export function AppShellClient({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function AppShellClient({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { logout, user } = useAuth();
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   async function handleLogout() {
     await logout();
-    router.replace("/login");
+    router.replace('/login');
   }
 
-  const userInitial =
-    user?.email?.charAt(0).toUpperCase() ?? "U";
+  const userInitial = user?.email?.charAt(0).toUpperCase() ?? 'U';
 
   return (
     <SidebarProvider defaultOpen>
@@ -80,34 +71,24 @@ export function AppShellClient({
                 aria-label="Open account menu"
               >
                 <Avatar className="h-8 w-8 cursor-pointer">
-                  <AvatarFallback>
-                    {userInitial}
-                  </AvatarFallback>
+                  <AvatarFallback>{userInitial}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end">
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel>
-                    My Account
-                  </DropdownMenuLabel>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
-                  <DropdownMenuItem>
-                    Profile
-                  </DropdownMenuItem>
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={handleLogout}>
-                    Logout
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
 
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

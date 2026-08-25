@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 export type AuthUser = {
   email: string;
-  name: string
+  name: string;
 };
 
 type AuthContextValue = {
@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function hydrate() {
       try {
-        const response = await fetch("/api/auth/me", { cache: "no-store" });
+        const response = await fetch('/api/auth/me', { cache: 'no-store' });
         if (!response.ok) {
           setUser(null);
           return;
@@ -51,9 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       refresh: async () => {
         try {
           setIsLoading(true);
-          const response = await fetch("/api/auth/me", {
-            cache: "no-store",
-            credentials: "include",
+          const response = await fetch('/api/auth/me', {
+            cache: 'no-store',
+            credentials: 'include',
           });
           if (!response.ok) {
             setUser(null);
@@ -70,16 +70,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login: (nextUser) => setUser(nextUser),
       logout: async () => {
         try {
-          await fetch("/api/auth/logout", {
-            method: "POST",
-            credentials: "include",
+          await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
           });
         } finally {
           setUser(null);
         }
       },
     }),
-    [user, isLoading],
+    [user, isLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -89,7 +89,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
 
   return context;

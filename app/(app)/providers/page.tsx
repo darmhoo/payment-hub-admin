@@ -1,48 +1,31 @@
-"use client";
+'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DataTable } from "@/components/table/app-table";
-import { Loader } from "@/components/ui/loader";
+import { DataTable } from '@/components/table/app-table';
+import { Loader } from '@/components/ui/loader';
 
-import PageContainer from "@/components/app-page-container";
-import AppPageHeader from "@/components/app-page-header";
+import PageContainer from '@/components/app-page-container';
+import AppPageHeader from '@/components/app-page-header';
 
-import CreateProviderDialog from "@/components/create-provider-dialog";
-import EditProviderDialog from "@/components/edit-provider-dialog";
-import ViewProviderDialog from "@/components/view-provider-dialogue";
+import CreateProviderDialog from '@/components/create-provider-dialog';
+import EditProviderDialog from '@/components/edit-provider-dialog';
+import ViewProviderDialog from '@/components/view-provider-dialogue';
 
-import { useProviders } from "@/components/providers/providers-provider";
+import { useProviders } from '@/components/providers/providers-provider';
 
-import {
-  getColumns,
-  type Provider,
-} from "./columns";
+import { getColumns, type Provider } from './columns';
 
 export default function ProvidersPage() {
-  const {
-    providers,
-    loading,
-    fetchProviders,
-    reloadProviders,
-  } = useProviders();
+  const { providers, loading, fetchProviders, reloadProviders } = useProviders();
 
-  const [editingProvider, setEditingProvider] =
-    useState<Provider | null>(null);
+  const [editingProvider, setEditingProvider] = useState<Provider | null>(null);
 
-  const [viewingProvider, setViewingProvider] =
-    useState<Provider | null>(null);
+  const [viewingProvider, setViewingProvider] = useState<Provider | null>(null);
 
-  const [editDialogOpen, setEditDialogOpen] =
-    useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
-  const [viewDialogOpen, setViewDialogOpen] =
-    useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
 
   /**
    * Fetch only when Providers page mounts.
@@ -54,24 +37,18 @@ export default function ProvidersPage() {
   /**
    * View provider.
    */
-  const handleView = useCallback(
-    (provider: Provider) => {
-      setViewingProvider(provider);
-      setViewDialogOpen(true);
-    },
-    []
-  );
+  const handleView = useCallback((provider: Provider) => {
+    setViewingProvider(provider);
+    setViewDialogOpen(true);
+  }, []);
 
   /**
    * Edit provider.
    */
-  const handleEdit = useCallback(
-    (provider: Provider) => {
-      setEditingProvider(provider);
-      setEditDialogOpen(true);
-    },
-    []
-  );
+  const handleEdit = useCallback((provider: Provider) => {
+    setEditingProvider(provider);
+    setEditDialogOpen(true);
+  }, []);
 
   /**
    * Table columns.
@@ -88,41 +65,31 @@ export default function ProvidersPage() {
   /**
    * Edit dialog.
    */
-  const handleEditDialogChange = useCallback(
-    (open: boolean) => {
-      setEditDialogOpen(open);
+  const handleEditDialogChange = useCallback((open: boolean) => {
+    setEditDialogOpen(open);
 
-      if (!open) {
-        setEditingProvider(null);
-      }
-    },
-    []
-  );
+    if (!open) {
+      setEditingProvider(null);
+    }
+  }, []);
 
   /**
    * View dialog.
    */
-  const handleViewDialogChange = useCallback(
-    (open: boolean) => {
-      setViewDialogOpen(open);
+  const handleViewDialogChange = useCallback((open: boolean) => {
+    setViewDialogOpen(open);
 
-      if (!open) {
-        setViewingProvider(null);
-      }
-    },
-    []
-  );
+    if (!open) {
+      setViewingProvider(null);
+    }
+  }, []);
 
   return (
     <PageContainer className="min-h-screen space-y-2 p-4">
       <AppPageHeader
         title="Providers"
         description="Manage payment, SMS, and email providers."
-        action={
-          <CreateProviderDialog
-            onProviderCreated={reloadProviders}
-          />
-        }
+        action={<CreateProviderDialog onProviderCreated={reloadProviders} />}
       />
 
       {loading ? (
@@ -130,11 +97,7 @@ export default function ProvidersPage() {
           <Loader text="Fetching providers..." />
         </div>
       ) : (
-        <DataTable
-          columns={providerColumns}
-          data={providers}
-          emptyMessage="No providers found."
-        />
+        <DataTable columns={providerColumns} data={providers} emptyMessage="No providers found." />
       )}
 
       <ViewProviderDialog

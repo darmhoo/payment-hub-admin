@@ -1,58 +1,41 @@
-"use client";
+'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DataTable } from "@/components/table/app-table";
-import { Loader } from "@/components/ui/loader";
-import { notify } from "@/lib/toast";
+import { DataTable } from '@/components/table/app-table';
+import { Loader } from '@/components/ui/loader';
+import { notify } from '@/lib/toast';
 
-import AppPageHeader from "@/components/app-page-header";
-import PageContainer from "@/components/app-page-container";
+import AppPageHeader from '@/components/app-page-header';
+import PageContainer from '@/components/app-page-container';
 
-import NewUserDialog from "@/components/create-user-dialog";
-import EditUserDialog from "@/components/edit-user-dialog";
-import EditStatusDialog from "@/components/edit-status-dialog";
-import EditRoleDialog from "@/components/edit-role-dialog";
+import NewUserDialog from '@/components/create-user-dialog';
+import EditUserDialog from '@/components/edit-user-dialog';
+import EditStatusDialog from '@/components/edit-status-dialog';
+import EditRoleDialog from '@/components/edit-role-dialog';
 
-import { useUsers } from "@/components/providers/users-provider";
+import { useUsers } from '@/components/providers/users-provider';
 
-import { getColumns, type User } from "./columns";
+import { getColumns, type User } from './columns';
 
 export default function Users() {
-  const {
-    users,
-    loading: loadingUsers,
-    error,
-    fetchUsers,
-    refreshUsers,
-  } = useUsers();
+  const { users, loading: loadingUsers, error, fetchUsers, refreshUsers } = useUsers();
 
   const [submitting, setSubmitting] = useState(false);
 
-  const [editDialogOpen, setEditDialogOpen] =
-    useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
-  const [editingUser, setEditingUser] =
-    useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
-  const [roleDialogOpen, setRoleDialogOpen] =
-    useState(false);
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
-  const [selectedRoleUser, setSelectedRoleUser] =
-    useState<User | null>(null);
+  const [selectedRoleUser, setSelectedRoleUser] = useState<User | null>(null);
 
-  const [newRole, setNewRole] = useState("");
+  const [newRole, setNewRole] = useState('');
 
-  const [statusDialogOpen, setStatusDialogOpen] =
-    useState(false);
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
 
-  const [selectedStatusUser, setSelectedStatusUser] =
-    useState<User | null>(null);
+  const [selectedStatusUser, setSelectedStatusUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -71,126 +54,91 @@ export default function Users() {
    */
   const openRoleDialog = useCallback((user: User) => {
     setSelectedRoleUser(user);
-    setNewRole(user.role ?? "");
+    setNewRole(user.role ?? '');
     setRoleDialogOpen(true);
   }, []);
 
   const submitRoleChange = useCallback(async () => {
     if (!selectedRoleUser) {
-      notify.error("No user selected");
+      notify.error('No user selected');
       return;
     }
 
     const role = newRole.trim();
 
     if (!role) {
-      notify.error("Role is required");
+      notify.error('Role is required');
       return;
     }
 
     try {
       setSubmitting(true);
 
-      const response = await fetch(
-        `/api/users/${selectedRoleUser.id}/role`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            role,
-          }),
-        }
-      );
+      const response = await fetch(`/api/users/${selectedRoleUser.id}/role`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          role,
+        }),
+      });
 
-      const data = await response
-        .json()
-        .catch(() => null);
+      const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(
-          data?.error ??
-            data?.message ??
-            "Failed to update user role"
-        );
+        throw new Error(data?.error ?? data?.message ?? 'Failed to update user role');
       }
 
       await refreshUsers();
 
       setRoleDialogOpen(false);
       setSelectedRoleUser(null);
-      setNewRole("");
+      setNewRole('');
 
-      notify.success(
-        `User role changed to ${role}`
-      );
+      notify.success(`User role changed to ${role}`);
     } catch (error) {
-      notify.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to update user role"
-      );
+      notify.error(error instanceof Error ? error.message : 'Failed to update user role');
     } finally {
       setSubmitting(false);
     }
-  }, [
-    selectedRoleUser,
-    newRole,
-    refreshUsers,
-  ]);
+  }, [selectedRoleUser, newRole, refreshUsers]);
 
   /*
    * Change status
    */
-  const openStatusDialog = useCallback(
-    (user: User) => {
-      setSelectedStatusUser(user);
-      setStatusDialogOpen(true);
-    },
-    []
-  );
+  const openStatusDialog = useCallback((user: User) => {
+    setSelectedStatusUser(user);
+    setStatusDialogOpen(true);
+  }, []);
 
   const submitStatusChange = useCallback(async () => {
     if (!selectedStatusUser) {
-      notify.error("No user selected");
+      notify.error('No user selected');
       return;
     }
 
-    const currentStatus =
-      selectedStatusUser.status;
+    const currentStatus = selectedStatusUser.status;
 
-    const newStatus =
-      currentStatus === "active"
-        ? "blocked"
-        : "active";
+    const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
 
     try {
       setSubmitting(true);
 
-      const response = await fetch(
-        `/api/users/${selectedStatusUser.id}/status`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status: newStatus,
-          }),
-        }
-      );
+      const response = await fetch(`/api/users/${selectedStatusUser.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      });
 
-      const data = await response
-        .json()
-        .catch(() => null);
+      const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(
-          data?.error ??
-            data?.message ??
-            "Failed to update user status"
-        );
+        throw new Error(data?.error ?? data?.message ?? 'Failed to update user status');
       }
 
       await refreshUsers();
@@ -198,34 +146,20 @@ export default function Users() {
       setStatusDialogOpen(false);
       setSelectedStatusUser(null);
 
-      notify.success(
-        `User status changed to ${newStatus}`
-      );
+      notify.success(`User status changed to ${newStatus}`);
     } catch (error) {
-      notify.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to update user status"
-      );
+      notify.error(error instanceof Error ? error.message : 'Failed to update user status');
     } finally {
       setSubmitting(false);
     }
-  }, [
-    selectedStatusUser,
-    refreshUsers,
-  ]);
+  }, [selectedStatusUser, refreshUsers]);
 
   /*
    * Delete user
    */
-  const handleDelete = useCallback(
-    (user: User) => {
-      notify.error(
-        `Delete ${user.email} is not implemented yet`
-      );
-    },
-    []
-  );
+  const handleDelete = useCallback((user: User) => {
+    notify.error(`Delete ${user.email} is not implemented yet`);
+  }, []);
 
   /*
    * Table columns
@@ -238,12 +172,7 @@ export default function Users() {
         onChangeStatus: openStatusDialog,
         onDelete: handleDelete,
       }),
-    [
-      handleEdit,
-      openRoleDialog,
-      openStatusDialog,
-      handleDelete,
-    ]
+    [handleEdit, openRoleDialog, openStatusDialog, handleDelete]
   );
 
   return (
@@ -251,11 +180,7 @@ export default function Users() {
       <AppPageHeader
         title="Users"
         description="Manage system administrators and users."
-        action={
-          <NewUserDialog
-            onUserCreated={refreshUsers}
-          />
-        }
+        action={<NewUserDialog onUserCreated={refreshUsers} />}
       />
 
       {loadingUsers ? (
@@ -264,16 +189,10 @@ export default function Users() {
         </div>
       ) : error ? (
         <div className="flex min-h-75 items-center justify-center">
-          <p className="text-sm text-destructive">
-            {error}
-          </p>
+          <p className="text-sm text-destructive">{error}</p>
         </div>
       ) : (
-        <DataTable
-          columns={userColumns}
-          data={users}
-          emptyMessage="No users found."
-        />
+        <DataTable columns={userColumns} data={users} emptyMessage="No users found." />
       )}
 
       <EditUserDialog
@@ -301,7 +220,7 @@ export default function Users() {
 
           if (!open) {
             setSelectedRoleUser(null);
-            setNewRole("");
+            setNewRole('');
           }
         }}
       />
