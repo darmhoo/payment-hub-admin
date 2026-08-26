@@ -178,7 +178,7 @@ export default function Users() {
   return (
     <PageContainer className="min-h-screen space-y-2 p-4">
       <AppPageHeader
-        title="Users"
+        title="Internal Users"
         description="Manage system administrators and users."
         action={<NewUserDialog onUserCreated={refreshUsers} />}
       />

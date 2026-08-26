@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LayoutDashboard, CreditCard, ArrowRightLeft, Receipt, FolderKanban } from 'lucide-react';
+import { LayoutDashboard, CreditCard, ArrowRightLeft, Receipt, FolderKanban, Logs, User } from 'lucide-react';
 
 import {
   Sidebar,
@@ -12,12 +12,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { title } from 'process';
 
 const menuItems = [
   {
     title: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
+  },
+
+  {
+    title: 'App Users',
+    href: '/app-users',
+    icon: User,
   },
   {
     title: 'Providers',
@@ -30,8 +37,8 @@ const menuItems = [
     icon: ArrowRightLeft,
   },
   {
-    title: 'Users',
-    href: '/users',
+    title: 'Internal Users',
+    href: '/internal-users',
     icon: Receipt,
   },
   {
@@ -39,6 +46,11 @@ const menuItems = [
     href: '/loan-products',
     icon: FolderKanban,
   },
+  {
+    title: 'Audit Logs',
+    href: '/audit-logs',
+    icon: Logs
+  }
 ];
 
 export default function SideBar() {

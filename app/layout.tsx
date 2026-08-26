@@ -7,6 +7,7 @@ import { UsersProvider } from '@/components/providers/users-provider';
 import { TransactionsProvider } from '@/components/providers/transactions-provider';
 import { ProvidersProvider } from '@/components/providers/providers-provider';
 import { ProductsProvider } from '@/components/providers/loan-product-provider';
+import { AuditLogProvider } from '@/components/providers/audit-log-provider';
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +29,9 @@ export default function RootLayout({
           <UsersProvider>
             <TransactionsProvider>
               <ProvidersProvider>
-                <ProductsProvider>{children}</ProductsProvider>
+                <ProductsProvider>
+                  <AuditLogProvider>{children}</AuditLogProvider>
+                </ProductsProvider>
               </ProvidersProvider>
             </TransactionsProvider>
           </UsersProvider>
