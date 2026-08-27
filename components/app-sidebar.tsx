@@ -38,7 +38,7 @@ const menuItems = [
   },
   {
     title: 'Internal Users',
-    href: '/internal-users',
+    href: '/users',
     icon: Receipt,
   },
   {

@@ -1,50 +1,55 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { DataTable } from '@/components/table/app-table';
 import { Loader } from '@/components/ui/loader';
 
 import AppPageHeader from '@/components/app-page-header';
 import PageContainer from '@/components/app-page-container';
-import { AuditLog, useAuditLogs } from '@/components/providers/audit-log-provider';
-import { getColumns } from './columns';
+import { useAppUsers } from '@/components/providers/app-user-provider';
+import { AppUsers, getColumns } from './columns';
 
-export default function AppUsers() {
-  const { auditlogs, loading, fetchAuditLogs, reloadAuditLogs, error } = useAuditLogs();
+export default function AppUsersPage() {
+  const {
+    appUsers,
+    loading,
+    fetchAppUsers,
+  } = useAppUsers();
 
+  const handleView = useCallback((appUser: AppUsers) => {
+    console.log(appUser);
+  }, []);
 
-   const handleView = useCallback((auditLog: AuditLog) => {
-      
-    }, []);
-  
-    /**
-     * Edit provider.
-     */
- 
-  const auditLogColumns = useMemo(
-      () =>
-        getColumns({
-          onView: handleView
-          
-        }),
-      [handleView]
-    );
+  const appUsersColumns = useMemo(
+    () =>
+      getColumns({
+        onView: handleView,
+      }),
+    [handleView]
+  );
 
   useEffect(() => {
-    fetchAuditLogs();
-  }, [fetchAuditLogs]);
+    fetchAppUsers();
+  }, [fetchAppUsers]);
 
   return (
     <PageContainer className="min-h-screen space-y-2 p-4">
-      <AppPageHeader title="Audit Logs" description="View Audit Logs" />
+      <AppPageHeader
+        title="App Users"
+        description="All app users"
+      />
 
       {loading ? (
         <div className="flex min-h-75 items-center justify-center">
-          <Loader text="Fetching logs..." />
+          <Loader text="Fetching users..." />
         </div>
       ) : (
-        <DataTable columns={auditLogColumns} data={auditlogs} emptyMessage="No logs found." />
+        <DataTable
+          columns={appUsersColumns}
+          data={appUsers}
+          emptyMessage="No users found."
+        />
       )}
     </PageContainer>
   );
