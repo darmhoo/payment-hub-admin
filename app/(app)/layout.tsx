@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import "../globals.css";
+import type { Metadata } from 'next';
+import '../globals.css';
 
-import { AppShellClient } from "@/components/app-shell-client";
-import { isAuthenticated } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { AppShellClient } from '@/components/app-shell-client';
+import { isAuthenticated } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: "Payment Gateway",
-  description: "Payment Gateway Dashboard",
+  title: 'Payment Gateway',
+  description: 'Payment Gateway Dashboard',
 };
 
 export default async function RootLayout({
@@ -18,7 +18,7 @@ export default async function RootLayout({
   const authenticated = await isAuthenticated();
 
   if (!authenticated) {
-    redirect("/login");
+    redirect('/login');
   }
 
   return <AppShellClient>{children}</AppShellClient>;

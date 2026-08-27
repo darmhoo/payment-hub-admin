@@ -1,6 +1,6 @@
 // components/ui/table-loader.tsx
 
-import { Loader } from "./loader";
+import { Loader } from './loader';
 
 type Props = {
   columns: number;

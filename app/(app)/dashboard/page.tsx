@@ -1,52 +1,43 @@
-"use client";
+'use client';
 
-import { ArrowLeftRight, CreditCard, SquareUser } from "lucide-react";
+import { ArrowLeftRight, CreditCard, SquareUser } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import PageContainer from "@/components/app-page-container";
-import AppPageHeader from "@/components/app-page-header";
-import AppStatCard from "@/components/app-stat-card";
-import DashboardModal from "@/components/dashboard-modal";
-import RecentTransactions from "@/components/recent-transaction";
+import { Button } from '@/components/ui/button';
+import PageContainer from '@/components/app-page-container';
+import AppPageHeader from '@/components/app-page-header';
+import AppStatCard from '@/components/app-stat-card';
+import DashboardModal from '@/components/dashboard-modal';
+import RecentTransactions from '@/components/recent-transaction';
 
-import { useUsers } from "@/components/providers/users-provider";
-import { useTransactions } from "@/components/providers/transactions-provider";
-import { useProviders } from "@/components/providers/providers-provider";
+import { useUsers } from '@/components/providers/users-provider';
+import { useTransactions } from '@/components/providers/transactions-provider';
+import { useProviders } from '@/components/providers/providers-provider';
 
 export default function Dashboard() {
-  const {
-    users = [],
-    loading: usersLoading,
-  } = useUsers();
+  const { users = [], loading: usersLoading } = useUsers();
 
-  const {
-    transactions = [],
-    loading: transactionsLoading,
-  } = useTransactions();
+  const { transactions = [], loading: transactionsLoading } = useTransactions();
 
-  const {
-    providers = [],
-    loading: providersLoading,
-  } = useProviders();
+  const { providers = [], loading: providersLoading } = useProviders();
 
   const stats = [
     {
-      title: "Users",
-      value: usersLoading ? "..." : users.length,
+      title: 'Users',
+      value: usersLoading ? '...' : users.length,
       icon: <SquareUser className="h-5 w-5" />,
-      subtitle: "All users",
+      subtitle: 'All users',
     },
     {
-      title: "Providers",
-      value: providersLoading ? "..." : providers.length,
+      title: 'Providers',
+      value: providersLoading ? '...' : providers.length,
       icon: <CreditCard className="h-5 w-5" />,
-      subtitle: "All providers",
+      subtitle: 'All providers',
     },
     {
-      title: "Transactions",
-      value: transactionsLoading ? "..." : transactions.length,
+      title: 'Transactions',
+      value: transactionsLoading ? '...' : transactions.length,
       icon: <ArrowLeftRight className="h-5 w-5" />,
-      subtitle: "All transactions",
+      subtitle: 'All transactions',
     },
   ];
 
@@ -55,11 +46,7 @@ export default function Dashboard() {
       <AppPageHeader
         title="Dashboard"
         description="Overview of your Payment Gateway and SMS platform."
-        action={
-          <Button type="button">
-            Export
-          </Button>
-        }
+        action={<Button type="button">Export</Button>}
       />
 
       <div className="grid gap-5 md:grid-cols-3">

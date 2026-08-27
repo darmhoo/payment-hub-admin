@@ -1,6 +1,6 @@
 // lib/toast.ts
 
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
 export const notify = {
   success: (message: string) => toast.success(message),

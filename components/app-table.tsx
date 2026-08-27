@@ -1,11 +1,6 @@
-"use client";
+'use client';
 
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  ColumnDef,
-} from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, ColumnDef } from '@tanstack/react-table';
 
 import {
   Table,
@@ -14,17 +9,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 interface AppTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
 }
 
-export default function AppTable<TData>({
-  columns,
-  data,
-}: AppTableProps<TData>) {
+export default function AppTable<TData>({ columns, data }: AppTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
@@ -41,10 +33,7 @@ export default function AppTable<TData>({
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>
@@ -53,16 +42,10 @@ export default function AppTable<TData>({
 
         <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className="hover:bg-zinc-50"
-            >
+            <TableRow key={row.id} className="hover:bg-zinc-50">
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>
-                  {flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
-                  )}
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
             </TableRow>

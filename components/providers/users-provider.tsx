@@ -1,19 +1,13 @@
-"use client";
+'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useState } from 'react';
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "super_admin";
-  status?: "active" | "blocked";
+  role: 'admin' | 'super_admin';
+  status?: 'active' | 'blocked';
 }
 
 interface UsersContextType {
@@ -24,15 +18,9 @@ interface UsersContextType {
   refreshUsers: () => Promise<void>;
 }
 
-const UsersContext = createContext<UsersContextType | undefined>(
-  undefined
-);
+const UsersContext = createContext<UsersContextType | undefined>(undefined);
 
-export function UsersProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function UsersProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,30 +30,22 @@ export function UsersProvider({
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/users", {
-        method: "GET",
-        cache: "no-store",
+      const response = await fetch('/api/users', {
+        method: 'GET',
+        cache: 'no-store',
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result?.error ??
-            result?.message ??
-            "Failed to fetch users"
-        );
+        throw new Error(result?.error ?? result?.message ?? 'Failed to fetch users');
       }
 
       setUsers(result.users ?? []);
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      console.error('Failed to fetch users:', error);
 
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Failed to fetch users"
-      );
+      setError(error instanceof Error ? error.message : 'Failed to fetch users');
     } finally {
       setLoading(false);
     }
@@ -94,9 +74,7 @@ export function useUsers() {
   const context = useContext(UsersContext);
 
   if (!context) {
-    throw new Error(
-      "useUsers must be used inside UsersProvider"
-    );
+    throw new Error('useUsers must be used inside UsersProvider');
   }
 
   return context;

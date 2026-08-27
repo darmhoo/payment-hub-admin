@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,12 +7,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { Button } from "@/components/ui/button";
-import { Loader } from "@/components/ui/loader";
+import { Button } from '@/components/ui/button';
+import { Loader } from '@/components/ui/loader';
 
-import type { User } from "@/app/(app)/users/columns";
+import type { User } from '@/app/(app)/users/columns';
 
 interface ChangeStatusDialogProps {
   user: User | null;
@@ -29,8 +29,8 @@ export default function EditStatusDialog({
   onSubmit,
   onOpenChange,
 }: ChangeStatusDialogProps) {
-  const isActive = user?.status === "active";
-  const newStatus = isActive ? "blocked" : "active";
+  const isActive = user?.status === 'active';
+  const newStatus = isActive ? 'blocked' : 'active';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -38,28 +38,18 @@ export default function EditStatusDialog({
         <DialogHeader>
           <DialogTitle>Change User Status</DialogTitle>
 
-          <DialogDescription>
-            Change the status for {user?.email}.
-          </DialogDescription>
+          <DialogDescription>Change the status for {user?.email}.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="rounded-md bg-muted p-4">
-            <p className="text-sm text-muted-foreground">
-              Current status
-            </p>
+            <p className="text-sm text-muted-foreground">Current status</p>
 
-            <p className="mt-1 font-medium capitalize">
-              {user?.status || "blocked"}
-            </p>
+            <p className="mt-1 font-medium capitalize">{user?.status || 'blocked'}</p>
           </div>
 
           <p className="text-sm text-muted-foreground">
-            This will change the user to{" "}
-            <strong className="text-foreground">
-              {newStatus}
-            </strong>
-            .
+            This will change the user to <strong className="text-foreground">{newStatus}</strong>.
           </p>
         </div>
 
@@ -75,7 +65,7 @@ export default function EditStatusDialog({
 
           <Button
             type="button"
-            variant={isActive ? "destructive" : "default"}
+            variant={isActive ? 'destructive' : 'default'}
             onClick={onSubmit}
             disabled={submitting || !user}
           >
@@ -85,7 +75,7 @@ export default function EditStatusDialog({
                 Changing...
               </>
             ) : (
-              "Change Status"
+              'Change Status'
             )}
           </Button>
         </DialogFooter>

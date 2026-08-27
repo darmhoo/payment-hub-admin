@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { useState } from 'react';
+import { MoreHorizontal } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 import {
   Dialog,
@@ -18,11 +18,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
-import type { User } from "@/app/(app)/users/columns";
+import type { User } from '@/app/(app)/users/columns';
 
 interface UserRowActionsProps {
   user: User;
@@ -44,16 +44,10 @@ export default function UserRowActions({
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8">
               <MoreHorizontal className="h-4 w-4" />
 
-              <span className="sr-only">
-                Open user actions
-              </span>
+              <span className="sr-only">Open user actions</span>
             </Button>
           }
         />
@@ -88,37 +82,23 @@ export default function UserRowActions({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Dialog
-        open={open}
-        onOpenChange={setOpen}
-      >
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              Edit User
-            </DialogTitle>
+            <DialogTitle>Edit User</DialogTitle>
 
-            <DialogDescription>
-              Update {user.name}&apos;s account information.
-            </DialogDescription>
+            <DialogDescription>Update {user.name}&apos;s account information.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">
-                Name
-              </label>
+              <label className="text-sm font-medium">Name</label>
 
-              <input
-                className="mt-1 w-full rounded-md border px-3 py-2"
-                defaultValue={user.name}
-              />
+              <input className="mt-1 w-full rounded-md border px-3 py-2" defaultValue={user.name} />
             </div>
 
             <div>
-              <label className="text-sm font-medium">
-                Email
-              </label>
+              <label className="text-sm font-medium">Email</label>
 
               <input
                 className="mt-1 w-full rounded-md border px-3 py-2"
@@ -127,22 +107,14 @@ export default function UserRowActions({
             </div>
 
             <div>
-              <label className="text-sm font-medium">
-                Role
-              </label>
+              <label className="text-sm font-medium">Role</label>
 
-              <input
-                className="mt-1 w-full rounded-md border px-3 py-2"
-                defaultValue={user.role}
-              />
+              <input className="mt-1 w-full rounded-md border px-3 py-2" defaultValue={user.role} />
             </div>
           </div>
 
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
 

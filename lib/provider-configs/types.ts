@@ -1,7 +1,7 @@
 export type ProviderField = {
   name: string;
   label: string;
-  type: "text" | "password" | "number" | "email" | "url" | "select";
+  type: 'text' | 'password' | 'number' | 'email' | 'url' | 'select';
   encrypted: boolean;
   placeholder?: string;
   required?: boolean;

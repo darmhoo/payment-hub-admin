@@ -1,6 +1,6 @@
 // components/ui/full-screen-loader.tsx
 
-import { Loader } from "./loader";
+import { Loader } from './loader';
 
 export function FullScreenLoader() {
   return (

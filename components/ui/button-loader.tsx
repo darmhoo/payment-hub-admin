@@ -1,14 +1,10 @@
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle } from 'lucide-react';
 
 type LoadingButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
 };
 
-export function LoadingButton({
-  loading,
-  children,
-  ...props
-}: LoadingButtonProps) {
+export function LoadingButton({ loading, children, ...props }: LoadingButtonProps) {
   return (
     <button
       {...props}

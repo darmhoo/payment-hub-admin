@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useForm } from "@tanstack/react-form";
-import * as z from "zod";
+import { useState } from 'react';
+import { useForm } from '@tanstack/react-form';
+import * as z from 'zod';
 
 import {
   Dialog,
@@ -12,63 +12,37 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Loader } from "@/components/ui/loader";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Loader } from '@/components/ui/loader';
 
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { notify } from "@/lib/toast";
+import { notify } from '@/lib/toast';
 
 const createUserSchema = z.object({
-  email: z.email("Invalid email address"),
+  email: z.email('Invalid email address'),
 
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
 
-  role: z.enum(["admin", "super_admin"], {
-    message: "Please select a role",
-  }),
-
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 interface NewUserDialogProps {
   onUserCreated?: () => Promise<void> | void;
 }
 
-export default function NewUserDialog({
-  onUserCreated,
-}: NewUserDialogProps) {
+export default function NewUserDialog({ onUserCreated }: NewUserDialogProps) {
   const [open, setOpen] = useState(false);
 
   const createForm = useForm({
     defaultValues: {
-      email: "",
-      name: "",
-      role: undefined as
-        | "admin"
-        | "super_admin"
-        | undefined,
-      password: "",
+      email: '',
+      name: '',
+
+      password: '',
     },
 
     validators: {
@@ -77,24 +51,19 @@ export default function NewUserDialog({
 
     onSubmit: async ({ value }) => {
       try {
-        const response = await fetch("/api/users", {
-          method: "POST",
+        console.log('Got here');
+        const response = await fetch('/api/users', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(value),
         });
 
-        const data = await response
-          .json()
-          .catch(() => null);
+        const data = await response.json().catch(() => null);
 
         if (!response.ok) {
-          throw new Error(
-            data?.error ??
-              data?.message ??
-              "Failed to create user"
-          );
+          throw new Error(data?.error ?? data?.message ?? 'Failed to create user');
         }
 
         await onUserCreated?.();
@@ -102,15 +71,11 @@ export default function NewUserDialog({
         createForm.reset();
         setOpen(false);
 
-        notify.success("User created successfully");
+        notify.success('User created successfully');
       } catch (error) {
-        console.error("Error creating user:", error);
+        console.error('Error creating user:', error);
 
-        notify.error(
-          error instanceof Error
-            ? error.message
-            : "Failed to create user"
-        );
+        notify.error(error instanceof Error ? error.message : 'Failed to create user');
       }
     },
   });
@@ -124,27 +89,14 @@ export default function NewUserDialog({
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={handleOpenChange}
-    >
-      <DialogTrigger
-        render={
-          <Button>
-            Add User
-          </Button>
-        }
-      />
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger render={<Button>Add User</Button>} />
 
       <DialogContent className="sm:max-w-125">
         <DialogHeader>
-          <DialogTitle>
-            Create User
-          </DialogTitle>
+          <DialogTitle>Create User</DialogTitle>
 
-          <DialogDescription>
-            Create a new administrator.
-          </DialogDescription>
+          <DialogDescription>Create a new administrator.</DialogDescription>
         </DialogHeader>
 
         <form
@@ -160,35 +112,21 @@ export default function NewUserDialog({
           <FieldGroup>
             <createForm.Field name="email">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched &&
-                  !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel>
-                      Email
-                    </FieldLabel>
+                    <FieldLabel>Email</FieldLabel>
 
                     <Input
                       type="email"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) =>
-                        field.handleChange(
-                          event.target.value
-                        )
-                      }
+                      onChange={(event) => field.handleChange(event.target.value)}
                       placeholder="admin@example.com"
                     />
 
-                    {isInvalid && (
-                      <FieldError
-                        errors={
-                          field.state.meta.errors
-                        }
-                      />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
@@ -196,34 +134,20 @@ export default function NewUserDialog({
 
             <createForm.Field name="name">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched &&
-                  !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel>
-                      Name
-                    </FieldLabel>
+                    <FieldLabel>Name</FieldLabel>
 
                     <Input
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) =>
-                        field.handleChange(
-                          event.target.value
-                        )
-                      }
+                      onChange={(event) => field.handleChange(event.target.value)}
                       placeholder="John Doe"
                     />
 
-                    {isInvalid && (
-                      <FieldError
-                        errors={
-                          field.state.meta.errors
-                        }
-                      />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
@@ -281,35 +205,21 @@ export default function NewUserDialog({
 
             <createForm.Field name="password">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched &&
-                  !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel>
-                      Password
-                    </FieldLabel>
+                    <FieldLabel>Password</FieldLabel>
 
                     <Input
                       type="password"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) =>
-                        field.handleChange(
-                          event.target.value
-                        )
-                      }
+                      onChange={(event) => field.handleChange(event.target.value)}
                       placeholder="••••••••"
                     />
 
-                    {isInvalid && (
-                      <FieldError
-                        errors={
-                          field.state.meta.errors
-                        }
-                      />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
@@ -329,22 +239,16 @@ export default function NewUserDialog({
             Cancel
           </Button>
 
-          <createForm.Subscribe
-            selector={(state) => state.isSubmitting}
-          >
+          <createForm.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
-              <Button
-                type="submit"
-                form="create-user-form"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" form="create-user-form" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader />
                     Creating...
                   </>
                 ) : (
-                  "Create User"
+                  'Create User'
                 )}
               </Button>
             )}

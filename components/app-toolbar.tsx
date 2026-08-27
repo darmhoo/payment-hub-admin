@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import { Search, RotateCw } from "lucide-react";
+import type { ReactNode } from 'react';
+import { Search, RotateCw } from 'lucide-react';
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface AppToolbarProps {
   search: string;
@@ -18,7 +18,7 @@ interface AppToolbarProps {
 export default function AppToolbar({
   search,
   onSearch,
-  placeholder = "Search...",
+  placeholder = 'Search...',
   onRefresh,
   children,
   actions,

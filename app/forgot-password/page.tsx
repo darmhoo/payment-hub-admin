@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,10 +21,10 @@ export default function ForgotPasswordPage() {
     setIsSubmitting(true);
 
     const formData = new FormData();
-    formData.append("email", email);
+    formData.append('email', email);
 
-    const response = await fetch("/api/auth/forgot-password", {
-      method: "POST",
+    const response = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
       body: formData,
     });
 
@@ -32,11 +32,11 @@ export default function ForgotPasswordPage() {
     setIsSubmitting(false);
 
     if (!response.ok) {
-      setError(data.error ?? "Unable to reset your password right now.");
+      setError(data.error ?? 'Unable to reset your password right now.');
       return;
     }
 
-    setMessage(data.message ?? "Reset link sent.");
+    setMessage(data.message ?? 'Reset link sent.');
   }
 
   return (
@@ -76,11 +76,14 @@ export default function ForgotPasswordPage() {
             </div>
 
             <Button className="w-full" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Sending..." : "Send reset link"}
+              {isSubmitting ? 'Sending...' : 'Send reset link'}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Remembered your password? <Link href="/login" className="text-primary hover:underline">Back to sign in</Link>
+              Remembered your password?{' '}
+              <Link href="/login" className="text-primary hover:underline">
+                Back to sign in
+              </Link>
             </p>
           </form>
         </CardContent>
